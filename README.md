@@ -74,22 +74,16 @@ Navigate into the project directory
 cd realescrape-go
 ```
 
-#### 3. Install necessary dependencies
-
-This project uses the Colly web scraping framework. To install the required
-dependencies you can run the following command
-
-```bash
-go get -u
-```
-
-#### 4. Run the program
+#### 3. Run the program
 
 Run the program with the following command
 
 ```bash
 go run . "Miami FL"
 ```
+
+The necessary dependencies should be automatically installed based on the go.mod
+file.
 
 **Locations must be entered in the following formats:**
 
