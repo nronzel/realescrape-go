@@ -4,6 +4,7 @@ Rewrite of my [Python based scraper](https://github.com/nronzel/realescrape) in 
 ## Upcoming
 - [ ] lotsize conversion
 - [ ] ratios
+- [ ] split utility functions into separate module
 
 more custom parameters:
 - [ ] beds
