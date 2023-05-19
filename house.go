@@ -12,12 +12,13 @@ import (
 )
 
 type house struct {
-    Price     string
+	Price     string
 	Beds      string
 	Baths     string
 	Sqft      string
-	lotSize   string
-	lotUnit   string
+	LotSize   string
+	LotUnit   string
+	LotSqft   string
 	Street    string
 	City      string
 	State     string
@@ -34,13 +35,14 @@ func parseHouse(e *colly.HTMLElement) house {
 	temp.Baths = strings.ReplaceAll(temp.Baths, "+", "")
 	temp.Sqft = strings.TrimSuffix(e.ChildText("li[data-label='pc-meta-sqft'] span"), "sqft")
 
-    // Split and the size and unit for the lot
+	// Split and the size and unit for the lot
 	lotSize := e.ChildText("li[data-label='pc-meta-sqftlot'] span")
-	size, lotUnit := splitUnits(lotSize)
-	temp.lotSize = size
-	temp.lotUnit = lotUnit
+	size, lotUnit, totalSqft := splitUnits(lotSize)
+	temp.LotSize = size
+	temp.LotUnit = lotUnit
+	temp.LotSqft = totalSqft
 
-    // Split the address info to provide slightly better normalization
+	// Split the address info to provide slightly better normalization
 	address := e.ChildText("div[data-label='pc-address']")
 	street, city, state, zip := parseAddress(address)
 	temp.Street = street
@@ -78,18 +80,18 @@ func writeHousesToCSV(houses []house) error {
 	// Write headers
 	headers := []string{
 		"Price", "Beds", "Baths", "Sqft", "LotSize",
-		"LotUnit", "Street", "City", "State", "Zip", "Link", "CrawlTime",
+		"LotUnit", "LotSqft", "Street", "City", "State", "Zip", "Link", "CrawlTime",
 	}
 	if err := writer.Write(headers); err != nil {
 		return err
 	}
 
-    var writeErr error
+	var writeErr error
 	// Write data
 	for _, h := range houses {
 		record := []string{
-			h.Price, h.Beds, h.Baths, h.Sqft, h.lotSize,
-			h.lotUnit, h.Street, h.City, h.State, h.Zip, h.Link, h.CrawlTime,
+			h.Price, h.Beds, h.Baths, h.Sqft, h.LotSize,
+			h.LotUnit, h.LotSqft, h.Street, h.City, h.State, h.Zip, h.Link, h.CrawlTime,
 		}
 		if err := writer.Write(record); err != nil {
 			writeErr = err
