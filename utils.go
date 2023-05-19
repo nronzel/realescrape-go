@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"regexp"
 	"strconv"
@@ -34,7 +35,10 @@ func splitUnits(input string) (string, string, string) {
 		unit := matches[2]
 		var totalSqft string
 		if unit == "acre" {
-			totalSqft = convertToSqft(number)
+			totalSqft, err := convertToSqft(number)
+			if err != nil {
+				log.Println("Error converting acre", err)
+			}
 			return number, unit, totalSqft
 		} else {
 			totalSqft = number
@@ -73,16 +77,20 @@ func logStats(start time.Time, houses []house) {
 	}
 }
 
-func convertToSqft(acre string) string {
-	num, err := strconv.ParseFloat(acre, 64)
+func convertToSqft(acre string) (string, error) {
+	num, err := strconv.ParseFloat(acre, 32)
 
 	if err != nil {
-		log.Println("Error converting value")
+		return "0", fmt.Errorf("Error converting total sqft: %v", err)
+	}
+
+	if num < 0 {
+		return "0", fmt.Errorf("value cannot be negative")
 	}
 
 	result := num * 43560.0
 
-	return strconv.Itoa(int(result))
+	return strconv.Itoa(int(result)), nil
 }
 
 func htyRatios(houseSqft, lotSqft string) (string, string) {
