@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"regexp"
+	"strconv"
 	"strings"
 	"time"
 
@@ -24,17 +25,24 @@ func getCollector() *colly.Collector {
 }
 
 // Splits the provided string where numbers meet letters
-func splitUnits(input string) (string, string) {
+func splitUnits(input string) (string, string, string) {
 	re := regexp.MustCompile(`(\d[\d,]*(?:\.\d+)?)\s*([a-zA-Z]+)`)
 	matches := re.FindStringSubmatch(input)
 
 	if len(matches) >= 3 {
 		number := matches[1]
 		unit := matches[2]
-		return number, unit
+		var totalSqft string
+		if unit == "acre" {
+			totalSqft = convertToSqft(number)
+			return number, unit, totalSqft
+		} else {
+			totalSqft = number
+			return number, unit, totalSqft
+		}
 	}
 
-	return "", ""
+	return "", "", ""
 }
 
 // Splits the address into its individual parts
@@ -63,5 +71,17 @@ func logStats(start time.Time, houses []house) {
 		averageTimePerListing := elapsed.Seconds() / float64(len(houses))
 		log.Printf("Average Time Per Listing (seconds): %f", averageTimePerListing)
 	}
+}
+
+func convertToSqft(acre string) string {
+	num, err := strconv.ParseFloat(acre, 64)
+
+	if err != nil {
+		log.Println("Error converting value")
+	}
+
+	result := num * 43560.0
+
+	return strconv.Itoa(int(result))
 }
 
