@@ -1,15 +1,3 @@
-/*
-TODO
-[]lotsize conversion
-[]ratios
-[]git repo
-more custom parameters
-[]beds
-[]baths
-[]sqft
-[]single/multi family
-*/
-
 package main
 
 import (
