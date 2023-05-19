@@ -93,3 +93,21 @@ go run . "Miami FL"
 `"90210"` - you can also just use a zip code
 
 
+When the program is complete, you will see some stats in the console on how many
+listings were scraped, how long it took, etc.
+
+The CSV file will be saved into a folder called `scans` located in the root
+directory of the project
+
+
+## Issues
+If you run into any problems you can open an issue, or submit a pull request.
+
+Currently there are some times where the program will run, appear to scrape,
+but the stats at the end will show 0 listings scraped. In this situation just
+try running the same scrape again as it will work as long as the location entered
+is valid.
+
+I will likely implement some logic to check if the listings scraped is 0
+and re-run the scrape if that is the case.
+
