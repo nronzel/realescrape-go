@@ -19,6 +19,8 @@ type house struct {
 	LotSize   string
 	LotUnit   string
 	LotSqft   string
+	Hty       string
+	HtyPcnt   string
 	Street    string
 	City      string
 	State     string
@@ -41,6 +43,13 @@ func parseHouse(e *colly.HTMLElement) house {
 	temp.LotSize = size
 	temp.LotUnit = lotUnit
 	temp.LotSqft = totalSqft
+
+	// Ratios
+	hty, htyPercent := htyRatios(strings.ReplaceAll(temp.Sqft, ",", ""),
+		strings.ReplaceAll(temp.LotSqft, ",", ""))
+
+	temp.Hty = hty
+	temp.HtyPcnt = htyPercent
 
 	// Split the address info to provide slightly better normalization
 	address := e.ChildText("div[data-label='pc-address']")
@@ -80,7 +89,7 @@ func writeHousesToCSV(houses []house) error {
 	// Write headers
 	headers := []string{
 		"Price", "Beds", "Baths", "Sqft", "LotSize",
-		"LotUnit", "LotSqft", "Street", "City", "State", "Zip", "Link", "CrawlTime",
+		"LotUnit", "LotSqft", "Hty", "HtyPcnt", "Street", "City", "State", "Zip", "Link", "CrawlTime",
 	}
 	if err := writer.Write(headers); err != nil {
 		return err
@@ -91,7 +100,8 @@ func writeHousesToCSV(houses []house) error {
 	for _, h := range houses {
 		record := []string{
 			h.Price, h.Beds, h.Baths, h.Sqft, h.LotSize,
-			h.LotUnit, h.LotSqft, h.Street, h.City, h.State, h.Zip, h.Link, h.CrawlTime,
+			h.LotUnit, h.LotSqft, h.Hty, h.HtyPcnt, h.Street, h.City,
+			h.State, h.Zip, h.Link, h.CrawlTime,
 		}
 		if err := writer.Write(record); err != nil {
 			writeErr = err

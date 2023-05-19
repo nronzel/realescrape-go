@@ -85,3 +85,27 @@ func convertToSqft(acre string) string {
 	return strconv.Itoa(int(result))
 }
 
+func htyRatios(houseSqft, lotSqft string) (string, string) {
+	if houseSqft == "" || lotSqft == "" {
+		return "", ""
+	}
+	houseSqftInt, err := strconv.Atoi(houseSqft)
+	if err != nil {
+		log.Println(err)
+	}
+
+	lotSqftInt, err := strconv.Atoi(lotSqft)
+	if err != nil {
+		log.Println(err)
+	}
+
+	houseSqftFloat := float64(houseSqftInt)
+	lotSqftFloat := float64(lotSqftInt)
+
+	hty := lotSqftFloat / houseSqftFloat
+	htyPercent := houseSqftFloat / lotSqftFloat
+
+	return strconv.FormatFloat(hty, 'f', 2, 64),
+		strconv.FormatFloat(htyPercent, 'f', 2, 64)
+
+}
