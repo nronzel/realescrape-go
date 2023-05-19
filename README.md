@@ -1,19 +1,23 @@
 # realescrape-go
+
 Rewrite of my [Python based scraper](https://github.com/nronzel/realescrape)
 in Go using the [Colly](https://github.com/gocolly/colly) web scraping framework.
 
 > NOTE This is for educational purposes only, and serves as a way to learn scraping
-and create my own API to get the data on a local front end.
+> and create my own API to get the data on a local front end.
 
 I don't intend on building a package to distribute as the nature of a web scraper
 is to break, and it will likely need to be updated constantly.
 
 ## Upcoming
-- [X] ~lotsize conversion~
-- [X] ~ratios~
-- [X] ~split utility functions into separate modules~
+
+- [x] ~lotsize conversion~
+- [x] ~ratios~
+- [x] ~split utility functions into separate modules~
+- [x] ~export to JSON~
 
 more custom parameters:
+
 - [ ] beds
 - [ ] baths
 - [ ] sqft
@@ -28,6 +32,7 @@ This program is intended to be run locally only and I do not intend to host
 the scraper publicly as a service.
 
 Currently has the following fixed search parameters:
+
 - Single family homes
 - Minimum Price - $100,000
 - Minimum Bedrooms - 1
@@ -73,6 +78,7 @@ cd realescrape-go
 
 This project uses the Colly web scraping framework. To install the required
 dependencies you can run the following command
+
 ```bash
 go get -u
 ```
@@ -80,6 +86,7 @@ go get -u
 #### 4. Run the program
 
 Run the program with the following command
+
 ```bash
 go run . "Miami FL"
 ```
@@ -92,15 +99,30 @@ go run . "Miami FL"
 
 `"90210"` - you can also just use a zip code
 
-
 When the program is complete, you will see some stats in the console on how many
 listings were scraped, how long it took, etc.
 
-The CSV file will be saved into a folder called `scans` located in the root
-directory of the project
+A CSV and JSON file will be generated and saved in the `scans` folder, located
+at the root of the project directory. This folder will be created if it doesn't
+already exist.
 
+## Misc
+
+Decided to export to JSON instead of porting over the MongoDB functionality from
+the Python version. For the purposes of just displaying the data and some
+visualizations locally I think a simple [JSON server](https://github.com/typicode/json-server)
+would suffice.
+
+I will have to add some logic to merge any JSON files present in the `scans`
+directory to run the JSON server from that single file.
+
+All filtering and visualizations will be done on the front end.
+
+MongoDB functionality may be added to this re-write down the line once I get
+some more of the basic features done.
 
 ## Issues
+
 If you run into any problems you can open an issue, or submit a pull request.
 
 Currently there are some times where the program will run, appear to scrape,
@@ -110,4 +132,3 @@ is valid.
 
 I will likely implement some logic to check if the listings scraped is 0
 and re-run the scrape if that is the case.
-
