@@ -35,7 +35,7 @@ Currently has the following fixed search parameters:
 - Age - 3+
 - Hides all houses pending sales
 - Hides 55+ communities
-- Sorts be newest listings
+- Sorts by newest listings
 
 I will be implementing logic to make most of the search parameters dynamic.
 
