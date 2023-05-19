@@ -85,8 +85,11 @@ go run . "Miami FL"
 ```
 
 **Locations must be entered in the following formats:**
+
 `"Miami FL"` - separate location and state, state must be capital
+
 `"San-Francisco CA"` - use a hyphen for locations with spaces
+
 `"90210"` - you can also just use a zip code
 
 
