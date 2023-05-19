@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/csv"
+	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -109,4 +110,28 @@ func writeHousesToCSV(houses []house) error {
 	}
 
 	return writeErr
+}
+
+func writeHousesToJson(houses []house) error {
+	location := strings.ReplaceAll(os.Args[1], " ", "-")
+	filePath := filepath.Join("scans", fmt.Sprintf("%s.json", location))
+
+	if err := os.MkdirAll(filepath.Dir(filePath), 0755); err != nil {
+		return err
+	}
+
+	file, err := os.Create(filePath)
+	if err != nil {
+		return err
+	}
+
+	defer file.Close()
+
+	jsonEncoder := json.NewEncoder(file)
+	jsonEncoder.SetIndent("", "  ")
+	if err := jsonEncoder.Encode(houses); err != nil {
+		return err
+	}
+
+	return nil
 }

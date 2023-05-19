@@ -92,6 +92,9 @@ func main() {
 			if err := writeHousesToCSV(houses); err != nil {
 				log.Println("Error saving to CSV:", err)
 			}
+			if err := writeHousesToJson(houses); err != nil {
+				log.Println("Error saving to JSON:", err)
+			}
 			os.Exit(0)
 		}
 	})
