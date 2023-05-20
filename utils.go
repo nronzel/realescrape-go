@@ -12,8 +12,8 @@ import (
 )
 
 func getCollector() *colly.Collector {
-
 	c := colly.NewCollector(colly.Async(true))
+
 	c.IgnoreRobotsTxt = true
 	c.UserAgent = agent
 
@@ -73,6 +73,7 @@ func logStats(start time.Time, houses []house) {
 	elapsed := time.Since(start)
 	log.Printf("Scraped: %d listings", len(houses))
 	log.Printf("Elapsed Time: %s\n", elapsed)
+
 	if len(houses) > 0 {
 		averageTimePerListing := elapsed.Seconds() / float64(len(houses))
 		log.Printf("Average Time Per Listing (seconds): %f", averageTimePerListing)
@@ -122,5 +123,4 @@ func htyRatios(houseSqft, lotSqft string) (string, string) {
 
 	return strconv.FormatFloat(hty, 'f', 2, 64),
 		strconv.FormatFloat(htyPercent, 'f', 2, 64)
-
 }

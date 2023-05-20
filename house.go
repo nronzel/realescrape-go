@@ -38,8 +38,10 @@ func parseHouse(e *colly.HTMLElement) house {
 	temp.Baths = strings.ReplaceAll(temp.Baths, "+", "")
 	temp.Sqft = strings.TrimSuffix(e.ChildText("li[data-label='pc-meta-sqft'] span"), "sqft")
 
-	// Splits lotsize and lotsize unit, also calculates total
-	// lotsize in sqft
+    /*
+	 Splits lotsize and lotsize unit, also calculates total
+	 lotsize in sqft
+    */
 	lotSize := e.ChildText("li[data-label='pc-meta-sqftlot'] span")
 	size, lotUnit, totalSqft := splitUnits(lotSize)
 	temp.LotSize = size
@@ -61,6 +63,7 @@ func parseHouse(e *colly.HTMLElement) house {
 	temp.Zip = zip
 	temp.Link = "https://realtor.com" + e.ChildAttr("div.photo-wrap a", "href")
 
+    // Add in current time & date when listing was scraped
 	currTime := time.Now()
 	dateTime := currTime.Format("2006-01-02 15:04:05")
 	temp.CrawlTime = dateTime
@@ -72,7 +75,7 @@ func writeHousesToCSV(houses []house) error {
 	location := strings.ReplaceAll(os.Args[1], " ", "-")
 	filePath := filepath.Join("scans", fmt.Sprintf("%s.csv", location))
 
-	// Create the scans directory if it doesn't exist
+	// Create the "scans" directory if it doesn't exist
 	if err := os.MkdirAll(filepath.Dir(filePath), 0755); err != nil {
 		return err
 	}
@@ -87,11 +90,13 @@ func writeHousesToCSV(houses []house) error {
 	writer := csv.NewWriter(file)
 	defer writer.Flush()
 
-	// Write headers
+    // Set the headers of the CSV
 	headers := []string{
 		"Price", "Beds", "Baths", "Sqft", "LotSize",
 		"LotUnit", "LotSqft", "Hty", "HtyPcnt", "Street", "City", "State", "Zip", "Link", "CrawlTime",
 	}
+
+    // Write the headers
 	if err := writer.Write(headers); err != nil {
 		return err
 	}
@@ -116,7 +121,6 @@ func writeHousesToCSV(houses []house) error {
 func writeHousesToJson(houses []house) error {
 	location := strings.ReplaceAll(os.Args[1], " ", "-")
 	filePath := filepath.Join("scans", fmt.Sprintf("%s.json", location))
-
 	if err := os.MkdirAll(filepath.Dir(filePath), 0755); err != nil {
 		return err
 	}
