@@ -49,8 +49,10 @@ func splitUnits(input string) (string, string, string) {
 	return "", "", ""
 }
 
-// Splits the address into its individual parts
-// I opted to keep street # and street name together
+/*
+Splits the address into its individual parts
+I opted to keep street # and street name together
+*/
 func parseAddress(address string) (string, string, string, string) {
 	splitAddress := strings.Split(address, ",")
 
@@ -93,6 +95,11 @@ func convertToSqft(acre string) (string, error) {
 	return strconv.Itoa(int(result)), nil
 }
 
+/*
+Calculates house to yard ratios. The first ratio is how many times
+the house will fit in the lotsize, and the second ratio is the
+percentage of the lot the house takes up.
+*/
 func htyRatios(houseSqft, lotSqft string) (string, string) {
 	if houseSqft == "" || lotSqft == "" {
 		return "", ""
