@@ -38,7 +38,8 @@ func parseHouse(e *colly.HTMLElement) house {
 	temp.Baths = strings.ReplaceAll(temp.Baths, "+", "")
 	temp.Sqft = strings.TrimSuffix(e.ChildText("li[data-label='pc-meta-sqft'] span"), "sqft")
 
-	// Split and the size and unit for the lot
+	// Splits lotsize and lotsize unit, also calculates total
+	// lotsize in sqft
 	lotSize := e.ChildText("li[data-label='pc-meta-sqftlot'] span")
 	size, lotUnit, totalSqft := splitUnits(lotSize)
 	temp.LotSize = size
@@ -48,7 +49,6 @@ func parseHouse(e *colly.HTMLElement) house {
 	// Ratios
 	hty, htyPercent := htyRatios(strings.ReplaceAll(temp.Sqft, ",", ""),
 		strings.ReplaceAll(temp.LotSqft, ",", ""))
-
 	temp.Hty = hty
 	temp.HtyPcnt = htyPercent
 
@@ -97,6 +97,7 @@ func writeHousesToCSV(houses []house) error {
 	}
 
 	var writeErr error
+
 	// Write data
 	for _, h := range houses {
 		record := []string{
