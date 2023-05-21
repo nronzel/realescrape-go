@@ -4,7 +4,7 @@ Rewrite of my [Python based scraper](https://github.com/nronzel/realescrape)
 in Go using the [Colly](https://github.com/gocolly/colly) web scraping framework.
 
 > NOTE This is for educational purposes only, and serves as a way to learn scraping
-> and create my own API to get the data on a local front end.
+> and practice creating an API that can be consumed by a front end.
 
 I don't intend on building a package to distribute as the nature of a web scraper
 is to break, and it will likely need to be updated constantly.
