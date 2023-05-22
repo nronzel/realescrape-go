@@ -15,6 +15,7 @@ is to break, and it will likely need to be updated constantly.
 - [x] ~ratios~
 - [x] ~split utility functions into separate modules~
 - [x] ~export to JSON~
+- [x] ~combine json files into a master file with all data~
 
 more custom parameters:
 
@@ -23,6 +24,9 @@ more custom parameters:
 - [ ] sqft
 - [ ] max-price
 - [ ] single/multi family
+
+TODO:
+- [ ] better error handling
 
 ## Description
 
@@ -93,6 +97,10 @@ file.
 
 `"90210"` - you can also just use a zip code
 
+> Currently will not work for full state searches (e.g. "Florida"). The url can't
+take a radius parameter. This may be remedied in the future by taking an argument
+flag at the console.
+
 When the program is complete, you will see some stats in the console on how many
 listings were scraped, how long it took, etc.
 
@@ -100,22 +108,35 @@ A CSV and JSON file will be generated and saved in the `scans` folder, located
 at the root of the project directory. This folder will be created if it doesn't
 already exist.
 
-## Misc
+## DevLog
 
-Decided to export to JSON instead of porting over the MongoDB functionality from
+~Decided to export to JSON instead of porting over the MongoDB functionality from
 the Python version. For the purposes of just displaying the data and some
 visualizations locally I think a simple [JSON server](https://github.com/typicode/json-server)
-would suffice.
+would suffice.~
 
+I realized using JSON Server would prevent me from being able to make my own API.
+
+So instead it is back to the original idea of using a local MongoDB instance.
 I will have to add some logic to merge any JSON files present in the `scans`
 directory to run the JSON server from that single file.
 
-All filtering and visualizations will be done on the front end.
+### Issues
 
-MongoDB functionality may be added to this re-write down the line once I get
-some more of the basic features done.
+#### Known Issues
 
-## Issues
+zip code search will pull listings nearby if there are a small number of
+results for the searched zip. Not really a big problem though.
+
+~will sometimes randomly not return data, but appear to scan each page.
+I am not sure what causes this, however you can just run the program again
+and it will work. A quick check at the console print of the number of listings
+scanned should tell you if it worked or not.~
+
+I believe the above issue is fixed by applying a min radius of 1 mile. I made
+radius a global const so it can be easily modified.
+
+---
 
 If you run into any problems you can open an issue, or submit a pull request.
 
