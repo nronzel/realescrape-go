@@ -1,8 +1,12 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
+	"os"
+	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
@@ -37,7 +41,7 @@ func splitUnits(input string) (string, string, string) {
 		if unit == "acre" {
 			totalSqft, err := convertToSqft(number)
 			if err != nil {
-				log.Println("Error converting acre", err)
+				log.Println("Error converting acre to sqft.", err)
 			}
 			return number, unit, totalSqft
 		} else {
@@ -71,7 +75,7 @@ func parseAddress(address string) (string, string, string, string) {
 func logStats(start time.Time, houses []house) {
 	log.Println("Finished Scraping page.")
 	elapsed := time.Since(start)
-	log.Printf("Scraped: %d listings", len(houses))
+	log.Printf("Extracted: %d listings", len(houses))
 	log.Printf("Elapsed Time: %s\n", elapsed)
 
 	if len(houses) > 0 {
@@ -131,3 +135,61 @@ func htyRatios(houseSqft, lotSqft string) (string, string) {
 	return strconv.FormatFloat(hty, 'f', 2, 64),
 		strconv.FormatFloat(htyPercent, 'f', 2, 64)
 }
+
+// Combines all JSON files in the /scans dir into a single JSON
+func combineJSON() {
+    dir := "./scans"
+
+    // holds json data & file count
+    var data []house
+    var jsonFiles int
+
+    files, err := ioutil.ReadDir(dir)
+    if err != nil {
+        log.Fatalf("failed to list files in directory %q: %v", dir, err)
+    }
+
+    // Loop through files in the directory
+    for _, file := range files {
+        // If file is ".json"
+        if filepath.Ext(file.Name()) == ".json" {
+            jsonFiles++
+            // Read the contents of the file
+            contents, err := ioutil.ReadFile(filepath.Join(dir, file.Name()))
+            if err != nil {
+                log.Printf("failed to read file %q: %v", file.Name(), err)
+                continue
+            }
+
+            // Unmarshal the data
+            var jsonData []house
+            if err := json.Unmarshal(contents, &jsonData); err != nil {
+                log.Printf("failed to unmarshal JSON data from file %q: %v", file.Name(), err)
+                continue
+            }
+
+
+            // Append the data from this file to the master slice
+            data = append(data, jsonData...)
+        }
+    }
+
+    if jsonFiles <= 1 {
+        os.Exit(0)
+    }
+
+
+    // Marshal master slice to JSON
+    jsonData, err := json.Marshal(data)
+    if err != nil {
+        log.Fatalf("failed to marshal data to JSON: %v", err)
+    }
+
+    // Write JSON to new file
+    if err := ioutil.WriteFile("merged.json", jsonData, 0644); err != nil {
+        log.Fatalf("failed to write JSON data to file: %v", err)
+    }
+}
+
+
+
