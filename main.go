@@ -98,9 +98,15 @@ func main() {
 	})
 	c.Wait()
 
+    if err := writeBothFiles(houses); err != nil {
+        log.Fatalf("Error while writing files: %v", err)
+    }
+
+    // Combine all JSON files in /scans
+    if err := combineJSON(); err != nil {
+        log.Fatalf("Error combining JSON files: %v", err)
+    }
+
 	logStats(start, houses)
 
-	if err := writeBothFiles(houses); err != nil {
-		log.Fatalf("Error while writing files: %v", err)
-	}
 }
