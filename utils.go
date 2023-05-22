@@ -97,9 +97,16 @@ func convertToSqft(acre string) (string, error) {
 }
 
 /*
-Calculates house to yard ratios. The first ratio is how many times
+Calculates house to yard ratios.
+
+The first ratio is how many times
 the house will fit in the lotsize, and the second ratio is the
 percentage of the lot the house takes up.
+
+I realize that a house may have more sqft than lotsize if it is a taller
+building like an apartment or condo building. Ideally these get filtered out
+when searching for single family homes only which makes these ratios actually
+mean something.
 */
 func htyRatios(houseSqft, lotSqft string) (string, string) {
 	if houseSqft == "" || lotSqft == "" {
