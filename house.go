@@ -13,21 +13,21 @@ import (
 )
 
 type house struct {
-	Price     string
-	Beds      string
-	Baths     string
-	Sqft      string
-	LotSize   string
-	LotUnit   string
-	LotSqft   string
-	Hty       string
-	HtyPcnt   string
-	Street    string
-	City      string
-	State     string
-	Zip       string
-	Link      string
-	CrawlTime string
+    Price     string `json:"Price"`
+    Beds      string `json:"Beds"`
+    Baths     string `json:"Baths"`
+    Sqft      string `json:"Sqft"`
+    LotSize   string `json:"LotSize"`
+    LotUnit   string `json:"LotUnit"`
+    LotSqft   string `json:"LotSqft"`
+    Hty       string `json:"Hty"`
+    HtyPcnt   string `json:"HtyPcnt"`
+    Street    string `json:"Street"`
+    City      string `json:"City"`
+    State     string `json:"State"`
+    Zip       string `json:"Zip"`
+    Link      string `json:"Link"`
+    CrawlTime string `json:"CrawlTime"`
 }
 
 func parseHouse(e *colly.HTMLElement) house {
