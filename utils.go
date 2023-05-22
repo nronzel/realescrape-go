@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
-	"os"
 	"path/filepath"
 	"regexp"
 	"strconv"
@@ -137,7 +136,7 @@ func htyRatios(houseSqft, lotSqft string) (string, string) {
 }
 
 // Combines all JSON files in the /scans dir into a single JSON
-func combineJSON() {
+func combineJSON() error {
     dir := "./scans"
 
     // holds json data & file count
@@ -146,7 +145,7 @@ func combineJSON() {
 
     files, err := ioutil.ReadDir(dir)
     if err != nil {
-        log.Fatalf("failed to list files in directory %q: %v", dir, err)
+        return fmt.Errorf("failed to list files in directory %q: %v", dir, err)
     }
 
     // Loop through files in the directory
@@ -157,15 +156,13 @@ func combineJSON() {
             // Read the contents of the file
             contents, err := ioutil.ReadFile(filepath.Join(dir, file.Name()))
             if err != nil {
-                log.Printf("failed to read file %q: %v", file.Name(), err)
-                continue
+                return fmt.Errorf("failed to read file %q: %v", file.Name(), err)
             }
 
             // Unmarshal the data
             var jsonData []house
             if err := json.Unmarshal(contents, &jsonData); err != nil {
-                log.Printf("failed to unmarshal JSON data from file %q: %v", file.Name(), err)
-                continue
+                return fmt.Errorf("failed to unmarshal JSON data from file %q: %v", file.Name(), err)
             }
 
 
@@ -175,20 +172,22 @@ func combineJSON() {
     }
 
     if jsonFiles <= 1 {
-        os.Exit(0)
+        return nil
     }
 
 
     // Marshal master slice to JSON
-    jsonData, err := json.Marshal(data)
+    jsonData, err := json.MarshalIndent(data, "", "  ")
     if err != nil {
-        log.Fatalf("failed to marshal data to JSON: %v", err)
+        return fmt.Errorf("failed to marshal data to JSON: %v", err)
     }
 
     // Write JSON to new file
-    if err := ioutil.WriteFile("merged.json", jsonData, 0644); err != nil {
-        log.Fatalf("failed to write JSON data to file: %v", err)
+    if err := ioutil.WriteFile("master.json", jsonData, 0644); err != nil {
+        return fmt.Errorf("failed to write JSON data to file: %v", err)
     }
+
+    return nil
 }
 
 
