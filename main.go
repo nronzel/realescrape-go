@@ -13,6 +13,7 @@ import (
 const (
 	homeType = "type-single-family-home"
 	minPrice = "price-100000-na"
+	radius   = "radius-1"
 	baseURL  = "https://www.realtor.com/realestateandhomes-search/"
 	agent    = "Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/113.0"
 )
@@ -49,7 +50,13 @@ func main() {
 	start := time.Now()
 
 	location := strings.ReplaceAll(os.Args[1], " ", "_")
-	options := fmt.Sprintf("%s/beds-1/baths-1/%s/%s/age-3+/pnd-hide/55p-hide/sby-6/", location, homeType, minPrice)
+	options := fmt.Sprintf(
+        "%s/beds-1/baths-1/%s/%s/age-3+/pnd-hide/fc-hide/55p-hide/%s/sby-6/",
+        location,
+        homeType,
+        minPrice,
+        radius,
+    )
 
 	url := baseURL + options
 
@@ -96,17 +103,17 @@ func main() {
 			os.Exit(0)
 		}
 	})
+
 	c.Wait()
 
-    if err := writeBothFiles(houses); err != nil {
-        log.Fatalf("Error while writing files: %v", err)
-    }
+	if err := writeBothFiles(houses); err != nil {
+		log.Fatalf("Error while writing files: %v", err)
+	}
 
-    // Combine all JSON files in /scans
-    if err := combineJSON(); err != nil {
-        log.Fatalf("Error combining JSON files: %v", err)
-    }
+	// Combine all JSON files in /scans
+	if err := combineJSON(); err != nil {
+		log.Fatalf("Error combining JSON files: %v", err)
+	}
 
 	logStats(start, houses)
-
 }
