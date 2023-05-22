@@ -13,21 +13,21 @@ import (
 )
 
 type house struct {
-    Price     string `json:"Price"`
-    Beds      string `json:"Beds"`
-    Baths     string `json:"Baths"`
-    Sqft      string `json:"Sqft"`
-    LotSize   string `json:"LotSize"`
-    LotUnit   string `json:"LotUnit"`
-    LotSqft   string `json:"LotSqft"`
-    Hty       string `json:"Hty"`
-    HtyPcnt   string `json:"HtyPcnt"`
-    Street    string `json:"Street"`
-    City      string `json:"City"`
-    State     string `json:"State"`
-    Zip       string `json:"Zip"`
-    Link      string `json:"Link"`
-    CrawlTime string `json:"CrawlTime"`
+	Price     string `json:"Price"`
+	Beds      string `json:"Beds"`
+	Baths     string `json:"Baths"`
+	Sqft      string `json:"Sqft"`
+	LotSize   string `json:"LotSize"`
+	LotUnit   string `json:"LotUnit"`
+	LotSqft   string `json:"LotSqft"`
+	Hty       string `json:"Hty"`
+	HtyPcnt   string `json:"HtyPcnt"`
+	Street    string `json:"Street"`
+	City      string `json:"City"`
+	State     string `json:"State"`
+	Zip       string `json:"Zip"`
+	Link      string `json:"Link"`
+	CrawlTime string `json:"CrawlTime"`
 }
 
 func parseHouse(e *colly.HTMLElement) house {
@@ -38,10 +38,10 @@ func parseHouse(e *colly.HTMLElement) house {
 	temp.Baths = strings.ReplaceAll(temp.Baths, "+", "")
 	temp.Sqft = strings.TrimSuffix(e.ChildText("li[data-label='pc-meta-sqft'] span"), "sqft")
 
-    /*
+	/*
 	 Splits lotsize and lotsize unit, also calculates total
 	 lotsize in sqft
-    */
+	*/
 	lotSize := e.ChildText("li[data-label='pc-meta-sqftlot'] span")
 	size, lotUnit, totalSqft := splitUnits(lotSize)
 	temp.LotSize = size
@@ -63,7 +63,7 @@ func parseHouse(e *colly.HTMLElement) house {
 	temp.Zip = zip
 	temp.Link = "https://realtor.com" + e.ChildAttr("div.photo-wrap a", "href")
 
-    // Add in current time & date when listing was scraped
+	// Add in current time & date when listing was scraped
 	currTime := time.Now()
 	dateTime := currTime.Format("2006-01-02 15:04:05")
 	temp.CrawlTime = dateTime
@@ -90,13 +90,13 @@ func writeHousesToCSV(houses []house) error {
 	writer := csv.NewWriter(file)
 	defer writer.Flush()
 
-    // Set the headers of the CSV
+	// Set the headers of the CSV
 	headers := []string{
 		"Price", "Beds", "Baths", "Sqft", "LotSize",
 		"LotUnit", "LotSqft", "Hty", "HtyPcnt", "Street", "City", "State", "Zip", "Link", "CrawlTime",
 	}
 
-    // Write the headers
+	// Write the headers
 	if err := writer.Write(headers); err != nil {
 		return err
 	}
@@ -137,6 +137,19 @@ func writeHousesToJson(houses []house) error {
 	if err := jsonEncoder.Encode(houses); err != nil {
 		return err
 	}
+
+	return nil
+}
+
+func writeBothFiles(houses []house) error {
+
+    if err:= writeHousesToJson(houses); err != nil {
+        return fmt.Errorf("error writing houses to JSON: %w", err)
+    }
+
+    if err:= writeHousesToCSV(houses); err != nil {
+        return fmt.Errorf("error writing houses to CSV: %w", err)
+    }
 
 	return nil
 }
