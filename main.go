@@ -89,16 +89,18 @@ func main() {
 		} else {
 			logStats(start, houses)
 
-			if err := writeHousesToCSV(houses); err != nil {
-				log.Println("Error saving to CSV:", err)
+			if err := writeBothFiles(houses); err != nil {
+				log.Fatalf("Error while writing files: %v", err)
 			}
-			if err := writeHousesToJson(houses); err != nil {
-				log.Println("Error saving to JSON:", err)
-			}
+
 			os.Exit(0)
 		}
 	})
 	c.Wait()
 
 	logStats(start, houses)
+
+	if err := writeBothFiles(houses); err != nil {
+		log.Fatalf("Error while writing files: %v", err)
+	}
 }
