@@ -143,13 +143,13 @@ func writeHousesToJson(houses []house) error {
 
 func writeBothFiles(houses []house) error {
 
-    if err:= writeHousesToJson(houses); err != nil {
-        return fmt.Errorf("error writing houses to JSON: %w", err)
-    }
+	if err := writeHousesToJson(houses); err != nil {
+		return fmt.Errorf("error writing houses to JSON: %w", err)
+	}
 
-    if err:= writeHousesToCSV(houses); err != nil {
-        return fmt.Errorf("error writing houses to CSV: %w", err)
-    }
+	if err := writeHousesToCSV(houses); err != nil {
+		return fmt.Errorf("error writing houses to CSV: %w", err)
+	}
 
 	return nil
 }
