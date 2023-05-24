@@ -1,4 +1,4 @@
-# realescrape-go https://img.shields.io/github/languages/top/nronzel/realescrape-go?style=flat-square
+# realescrape-go ![go](https://img.shields.io/github/languages/top/nronzel/realescrape-go?style=flat-square)
 
 Rewrite of my [Python based scraper](https://github.com/nronzel/realescrape)
 in Go using the [Colly](https://github.com/gocolly/colly) web scraping framework.
