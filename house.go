@@ -13,21 +13,21 @@ import (
 )
 
 type house struct {
-	Price     string `json:"Price"`
-	Beds      string `json:"Beds"`
-	Baths     string `json:"Baths"`
-	Sqft      string `json:"Sqft"`
-	LotSize   string `json:"LotSize"`
-	LotUnit   string `json:"LotUnit"`
-	LotSqft   string `json:"LotSqft"`
-	Hty       string `json:"Hty"`
-	HtyPcnt   string `json:"HtyPcnt"`
-	Street    string `json:"Street"`
-	City      string `json:"City"`
-	State     string `json:"State"`
-	Zip       string `json:"Zip"`
-	Link      string `json:"Link"`
-	CrawlTime string `json:"CrawlTime"`
+    Price     string `json:"Price" bson:"price"`
+    Beds      string `json:"Beds" bson:"beds"`
+    Baths     string `json:"Baths" bson:"baths"`
+    Sqft      string `json:"Sqft" bson:"sqft"`
+    LotSize   string `json:"LotSize" bson:"lotSize"`
+    LotUnit   string `json:"LotUnit" bson:"lotUnit"`
+    LotSqft   string `json:"LotSqft" bson:"lotSqft"`
+    Hty       string `json:"Hty" bson:"hty"`
+    HtyPcnt   string `json:"HtyPcnt" bson:"htyPcnt"`
+    Street    string `json:"Street" bson:"street"`
+    City      string `json:"City" bson:"city"`
+    State     string `json:"State" bson:"state"`
+    Zip       string `json:"Zip" bson:"zip"`
+    Link      string `json:"Link" bson:"link"`
+    CrawlTime string `json:"CrawlTime" bson:"crawlTime"`
 }
 
 func parseHouse(e *colly.HTMLElement) house {
@@ -93,7 +93,8 @@ func writeHousesToCSV(houses []house) error {
 	// Set the headers of the CSV
 	headers := []string{
 		"Price", "Beds", "Baths", "Sqft", "LotSize",
-		"LotUnit", "LotSqft", "Hty", "HtyPcnt", "Street", "City", "State", "Zip", "Link", "CrawlTime",
+		"LotUnit", "LotSqft", "Hty", "HtyPcnt", "Street", "City", "State",
+		"Zip", "Link", "CrawlTime",
 	}
 
 	// Write the headers
