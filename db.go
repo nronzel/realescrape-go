@@ -14,7 +14,7 @@ import (
 
 func connectMongo() *mongo.Collection {
 
-    uri := "mongodb://127.0.0.1:27017"
+	uri := "mongodb://127.0.0.1:27017"
 
 	client, err := mongo.Connect(context.Background(), options.Client().ApplyURI(uri))
 
@@ -64,13 +64,15 @@ func insertMongo(collection *mongo.Collection) {
 		log.Printf("Error umarshaling json: %v\n", err)
 	}
 
-	housesInterface := make([]interface{}, len(houses))
-	for i, v := range houses {
-		housesInterface[i] = v
-	}
+	for _, h := range houses {
+		filter := bson.M{"link": h.Link}
+		update := bson.M{"$set": h}
 
-	_, err = collection.InsertMany(context.Background(), housesInterface)
-	if err != nil {
-		log.Printf("Error inserting data into collection: %v", err)
+		opts := options.Update().SetUpsert(true)
+
+		_, err = collection.UpdateOne(context.Background(), filter, update, opts)
+		if err != nil {
+			log.Printf("Error updating/inserting data into collection: %v", err)
+		}
 	}
 }
