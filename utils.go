@@ -171,7 +171,7 @@ func combineJSON() error {
         }
     }
 
-    if jsonFiles <= 1 {
+    if jsonFiles < 1 {
         return nil
     }
 
@@ -189,6 +189,4 @@ func combineJSON() error {
 
     return nil
 }
-
-
 
