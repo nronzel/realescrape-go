@@ -17,8 +17,7 @@ is to break, and it will likely need to be updated constantly.
 - [x] ~export to JSON~
 - [x] ~combine json files into a master file with all data~
 
-more custom parameters:
-
+Custom parameters:
 - [ ] beds
 - [ ] baths
 - [ ] sqft
@@ -27,14 +26,18 @@ more custom parameters:
 - [x] radius
 
 TODO:
-- [ ] better error handling
+- [x] ~MongoDB~
+- [ ] API endpoints
+- [ ] Front End
 
 ## Description
 
 Simple web scraper for Realtor.com.
 
-This program is intended to be run locally only and I do not intend to host
-the scraper publicly as a service.
+This program is intended to be run locally only.
+
+It also requires a MongoDB instance to be running locally on the default port
+with no credentials.
 
 Currently has the following fixed search parameters:
 
@@ -45,6 +48,7 @@ Currently has the following fixed search parameters:
 - Age - 3+
 - Hides all houses pending sales
 - Hides 55+ communities
+- Hides foreclosures
 - Sorts by newest listings
 
 I will be implementing logic to make most of the search parameters dynamic.
@@ -111,21 +115,13 @@ already exist.
 
 ## DevLog
 
-~Decided to export to JSON instead of porting over the MongoDB functionality from
-the Python version. For the purposes of just displaying the data and some
-visualizations locally I think a simple [JSON server](https://github.com/typicode/json-server)
-would suffice.~
-
-I realized using JSON Server would prevent me from being able to make my own API.
-
-So instead it is back to the original idea of using a local MongoDB instance.
+Implemented MongoDB. Uses the URL of each listing as the unique key. More work needs
+to be done to handle updating existing entries, currently it will just error out
+if there is a duplicate entry.
 
 ### Issues
 
 #### Known Issues
-
-zip code search will pull listings nearby if there are a small number of
-results for the searched zip. Not really a big problem though.
 
 ~will sometimes randomly not return data, but appear to scan each page.
 I am not sure what causes this, however you can just run the program again
