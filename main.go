@@ -48,15 +48,16 @@ Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15
 
 func main() {
 	start := time.Now()
+    collection := connectMongo()
 
 	location := strings.ReplaceAll(os.Args[1], " ", "_")
 	options := fmt.Sprintf(
-        "%s/beds-1/baths-1/%s/%s/age-3+/pnd-hide/fc-hide/55p-hide/%s/sby-6/",
-        location,
-        homeType,
-        minPrice,
-        radius,
-    )
+		"%s/beds-1/baths-1/%s/%s/age-3+/pnd-hide/fc-hide/55p-hide/%s/sby-6/",
+		location,
+		homeType,
+		minPrice,
+		radius,
+	)
 
 	url := baseURL + options
 
@@ -78,10 +79,6 @@ func main() {
 		fmt.Println("Visiting", r.URL.String())
 	})
 
-	err := c.Visit(url)
-	if err != nil {
-		log.Fatal(err)
-	}
 
 	c.OnHTML("a[aria-label='Go to next page']", func(e *colly.HTMLElement) {
 		nextPage := e.Attr("href")
@@ -100,11 +97,22 @@ func main() {
 				log.Fatalf("Error while writing files: %v", err)
 			}
 
-			os.Exit(0)
+            if err := combineJSON(); err != nil {
+                log.Fatalf("Error combining JSON files: %v", err)
+            }
+
+			insertMongo(collection)
+
+            os.Exit(0)
 		}
 	})
 
-	c.Wait()
+    err := c.Visit(url)
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    c.Wait()
 
 	if err := writeBothFiles(houses); err != nil {
 		log.Fatalf("Error while writing files: %v", err)
@@ -114,6 +122,8 @@ func main() {
 	if err := combineJSON(); err != nil {
 		log.Fatalf("Error combining JSON files: %v", err)
 	}
+
+	insertMongo(collection)
 
 	logStats(start, houses)
 }
