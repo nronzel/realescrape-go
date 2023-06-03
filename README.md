@@ -3,8 +3,7 @@
 Rewrite of my [Python based scraper](https://github.com/nronzel/realescrape)
 in Go using the [Colly](https://github.com/gocolly/colly) web scraping framework.
 
-> NOTE This is for educational purposes only, and serves as a way to learn scraping
-> and practice creating an API that can be consumed by a front end.
+> NOTE This project is for educational purposes only. Please use with care.
 
 I don't intend on building a package to distribute as the nature of a web scraper
 is to break, and it will likely need to be updated constantly.
@@ -29,6 +28,7 @@ TODO:
 - [x] ~MongoDB~
 - [ ] API endpoints
 - [ ] Front End
+- [x] ~Split code into separate packages for easier maintanability~
 
 ## Description
 
@@ -61,6 +61,10 @@ view and filter through data.
 
 ## Installation
 
+> Currently in the process of splitting the codebase into separate packages and
+>creating the API. The instructions will be updated when the API is finished.
+>Once the API is done and verified working, I will begin working on the front end.
+
 #### 1. Install Go
 
 To install and run this scraper locally, you will first need to ensure you have
@@ -83,17 +87,17 @@ Navigate into the project directory
 cd realescrape-go
 ```
 
-#### 3. Run the program
+#### 3. Install dependencies
+
+In the root directory of the project, run `go get .`
+
+#### 4. Run the program
 
 Run the program with the following command
 
 ```bash
-go run . "Miami FL"
+go run main.go "Miami FL"
 ```
-
-The necessary dependencies should be automatically installed based on the go.mod
-file.
-
 **Locations must be entered in the following formats:**
 
 `"Miami FL"` - separate location and state, state must be capital
