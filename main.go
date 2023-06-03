@@ -61,7 +61,7 @@ func main() {
 
 	url := baseURL + options
 
-	houses := []house{}
+	houses := []House{}
 	c := getCollector()
 
 	c.OnHTML("li[data-testid='result-card']", func(e *colly.HTMLElement) {

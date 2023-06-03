@@ -57,7 +57,7 @@ func insertMongo(collection *mongo.Collection) {
 		log.Printf("Error: %v\n", err)
 	}
 
-	var houses []house
+	var houses []House
 
 	err = json.Unmarshal(data, &houses)
 	if err != nil {

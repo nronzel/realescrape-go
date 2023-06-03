@@ -71,7 +71,7 @@ func parseAddress(address string) (string, string, string, string) {
 	return street, city, state, zip
 }
 
-func logStats(start time.Time, houses []house) {
+func logStats(start time.Time, houses []House) {
 	log.Println("Finished Scraping page.")
 	elapsed := time.Since(start)
 	log.Printf("Extracted: %d listings", len(houses))
@@ -140,7 +140,7 @@ func combineJSON() error {
     dir := "./scans"
 
     // holds json data & file count
-    var data []house
+    var data []House
     var jsonFiles int
 
     files, err := ioutil.ReadDir(dir)
@@ -160,7 +160,7 @@ func combineJSON() error {
             }
 
             // Unmarshal the data
-            var jsonData []house
+            var jsonData []House
             if err := json.Unmarshal(contents, &jsonData); err != nil {
                 return fmt.Errorf("failed to unmarshal JSON data from file %q: %v", file.Name(), err)
             }

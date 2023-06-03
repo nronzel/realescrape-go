@@ -12,7 +12,7 @@ import (
 	"github.com/gocolly/colly"
 )
 
-type house struct {
+type House struct {
     Price     string `json:"Price" bson:"price"`
     Beds      string `json:"Beds" bson:"beds"`
     Baths     string `json:"Baths" bson:"baths"`
@@ -30,8 +30,8 @@ type house struct {
     CrawlTime string `json:"CrawlTime" bson:"crawlTime"`
 }
 
-func parseHouse(e *colly.HTMLElement) house {
-	temp := house{}
+func parseHouse(e *colly.HTMLElement) House {
+	temp := House{}
 	temp.Price = strings.Replace(e.ChildText("span[data-label='pc-price']"), "$", "", 1)
 	temp.Beds = strings.TrimSuffix(e.ChildText("li[data-label='pc-meta-beds'] span"), "bed")
 	temp.Baths = strings.TrimSuffix(e.ChildText("li[data-label='pc-meta-baths'] span"), "bath")
@@ -71,7 +71,7 @@ func parseHouse(e *colly.HTMLElement) house {
 	return temp
 }
 
-func writeHousesToCSV(houses []house) error {
+func writeHousesToCSV(houses []House) error {
 	location := strings.ReplaceAll(os.Args[1], " ", "-")
 	filePath := filepath.Join("scans", fmt.Sprintf("%s.csv", location))
 
@@ -119,7 +119,7 @@ func writeHousesToCSV(houses []house) error {
 	return writeErr
 }
 
-func writeHousesToJson(houses []house) error {
+func writeHousesToJson(houses []House) error {
 	location := strings.ReplaceAll(os.Args[1], " ", "-")
 	filePath := filepath.Join("scans", fmt.Sprintf("%s.json", location))
 	if err := os.MkdirAll(filepath.Dir(filePath), 0755); err != nil {
@@ -142,7 +142,7 @@ func writeHousesToJson(houses []house) error {
 	return nil
 }
 
-func writeBothFiles(houses []house) error {
+func writeBothFiles(houses []House) error {
 
 	if err := writeHousesToJson(houses); err != nil {
 		return fmt.Errorf("error writing houses to JSON: %w", err)
