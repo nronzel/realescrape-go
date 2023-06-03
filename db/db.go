@@ -1,4 +1,4 @@
-package main
+package db
 
 import (
 	"context"
@@ -10,9 +10,10 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+    "github.com/nronzel/realescrape-go/models"
 )
 
-func connectMongo() *mongo.Collection {
+func ConnectMongo() *mongo.Collection {
 
 	uri := "mongodb://127.0.0.1:27017"
 
@@ -49,7 +50,7 @@ func connectMongo() *mongo.Collection {
 	return collection
 }
 
-func insertMongo(collection *mongo.Collection) {
+func InsertMongo(collection *mongo.Collection) {
 	// Read data from master.json
 	data, err := ioutil.ReadFile("master.json")
 
@@ -57,7 +58,7 @@ func insertMongo(collection *mongo.Collection) {
 		log.Printf("Error: %v\n", err)
 	}
 
-	var houses []House
+	var houses []models.House
 
 	err = json.Unmarshal(data, &houses)
 	if err != nil {

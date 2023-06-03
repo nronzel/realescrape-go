@@ -1,4 +1,4 @@
-package main
+package scraper
 
 import (
 	"encoding/json"
@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/gocolly/colly"
+	"github.com/nronzel/realescrape-go/models"
 )
 
 func getCollector() *colly.Collector {
@@ -71,7 +72,7 @@ func parseAddress(address string) (string, string, string, string) {
 	return street, city, state, zip
 }
 
-func logStats(start time.Time, houses []House) {
+func logStats(start time.Time, houses []models.House) {
 	log.Println("Finished Scraping page.")
 	elapsed := time.Since(start)
 	log.Printf("Extracted: %d listings", len(houses))
@@ -140,7 +141,7 @@ func combineJSON() error {
     dir := "./scans"
 
     // holds json data & file count
-    var data []House
+    var data []models.House
     var jsonFiles int
 
     files, err := ioutil.ReadDir(dir)
@@ -160,7 +161,7 @@ func combineJSON() error {
             }
 
             // Unmarshal the data
-            var jsonData []House
+            var jsonData []models.House
             if err := json.Unmarshal(contents, &jsonData); err != nil {
                 return fmt.Errorf("failed to unmarshal JSON data from file %q: %v", file.Name(), err)
             }
