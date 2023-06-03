@@ -1,4 +1,4 @@
-module test
+module github.com/nronzel/realescrape-go
 
 go 1.20
 
