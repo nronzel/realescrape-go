@@ -89,7 +89,10 @@ cd realescrape-go
 
 #### 3. Install dependencies
 
-In the root directory of the project, run `go get .`
+In the root directory of the project, run
+```bash
+go get .
+```
 
 #### 4. Run the program
 
