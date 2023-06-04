@@ -3,7 +3,6 @@ package scraper
 import (
 	"fmt"
 	"log"
-	"os"
 	"strings"
 	"time"
 
@@ -90,20 +89,6 @@ func RunScraper(collection *mongo.Collection, location string) {
 			if err != nil {
 				log.Println("Error visiting next page:", err)
 			}
-		} else {
-			logStats(start, houses)
-
-			if err := writeBothFiles(houses); err != nil {
-				log.Fatalf("Error while writing files: %v", err)
-			}
-
-			if err := combineJSON(); err != nil {
-				log.Fatalf("Error combining JSON files: %v", err)
-			}
-
-			db.InsertMongo(collection)
-
-			os.Exit(0)
 		}
 	})
 
@@ -114,16 +99,17 @@ func RunScraper(collection *mongo.Collection, location string) {
 
 	c.Wait()
 
+	logStats(start, houses)
+
 	if err := writeBothFiles(houses); err != nil {
 		log.Fatalf("Error while writing files: %v", err)
 	}
 
-	// Combine all JSON files in /scans
+	// Combine all JSON files located in /scans
 	if err := combineJSON(); err != nil {
 		log.Fatalf("Error combining JSON files: %v", err)
 	}
 
 	db.InsertMongo(collection)
 
-	logStats(start, houses)
 }
