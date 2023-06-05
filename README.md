@@ -13,7 +13,8 @@ in Go using the [Colly](https://github.com/gocolly/colly) web scraping framework
 - [x] ~export to JSON~
 - [x] ~combine json files into a master file with all data~
 
-- These will be implemented once I create a proper CLI for this program.
+-- These will be implemented once I create a proper CLI for this program.
+
 Custom parameters:
 - [ ] beds
 - [ ] baths
