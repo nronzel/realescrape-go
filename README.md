@@ -5,9 +5,6 @@ in Go using the [Colly](https://github.com/gocolly/colly) web scraping framework
 
 > NOTE This project is for educational purposes only. Please use with care.
 
-I don't intend on building a package to distribute as the nature of a web scraper
-is to break, and it will likely need to be updated constantly.
-
 ## Upcoming
 
 - [x] ~lotsize conversion~
@@ -16,6 +13,7 @@ is to break, and it will likely need to be updated constantly.
 - [x] ~export to JSON~
 - [x] ~combine json files into a master file with all data~
 
+- These will be implemented once I create a proper CLI for this program.
 Custom parameters:
 - [ ] beds
 - [ ] baths
@@ -26,9 +24,11 @@ Custom parameters:
 
 TODO:
 - [x] ~MongoDB~
-- [ ] API endpoints
+- [x] ~API endpoint~
+- [ ] Unit tests for the DB and API
 - [ ] Front End
 - [x] ~Split code into separate packages for easier maintanability~
+- [ ] Create a proper CLI to set the parameters rather than taking arguments
 
 ## Description
 
@@ -59,11 +59,12 @@ and sort data yourself once it is scraped.
 A frontend will be developed as well that can be hosted locally to easily
 view and filter through data.
 
-## Installation
+##### API
 
-> Currently in the process of splitting the codebase into separate packages and
->creating the API. The instructions will be updated when the API is finished.
->Once the API is done and verified working, I will begin working on the front end.
+The API is a very simple Echo server with a single GET endpoint to retrieve
+all of the houses in the Mongo collection.
+
+## Installation
 
 #### 1. Install Go
 
@@ -96,11 +97,17 @@ go get .
 
 #### 4. Run the program
 
-Run the program with the following command
+Run the program with the following command, with the location you are interested
+in as an argument.
 
 ```bash
 go run main.go "Miami FL"
 ```
+Running `main.go` will connect to the MongoDB collection, perform the data
+extraction, merge all JSON documents in the /scans directory into a `master.json`
+file, uploads all of the entries in `master.json` to the MongoDB collection,
+and then starts the API. The endpoint is accessible at `localhost:3000/houses`.
+
 **Locations must be entered in the following formats:**
 
 `"Miami FL"` - separate location and state, state must be capital
