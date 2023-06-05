@@ -70,10 +70,10 @@ func StartAPI(collection *mongo.Collection) {
 	e := echo.New()
 
 	// Register getAllHouses handler to /houses endpoint
-	// Responds to GET requests with all items in the MongoDB collection
+	// Responds to requests with all items in the MongoDB collection
 	e.GET("/houses", getAllHouses(collection))
 
-	// Start server on port localhost:6000
+	// Start server on port localhost:3000
 	err := e.Start(":3000")
 	if err != nil {
 		log.Fatalf("Failed to start the server: %v", err)
