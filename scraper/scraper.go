@@ -105,7 +105,7 @@ func RunScraper(collection *mongo.Collection, location string) {
 		log.Fatalf("Error while writing files: %v", err)
 	}
 
-	// Combine all JSON files located in /scans
+	// Combine all JSON files located in /data
 	if err := combineJSON(); err != nil {
 		log.Fatalf("Error combining JSON files: %v", err)
 	}

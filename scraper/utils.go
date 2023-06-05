@@ -136,9 +136,9 @@ func htyRatios(houseSqft, lotSqft string) (string, string) {
 		strconv.FormatFloat(htyPercent, 'f', 2, 64)
 }
 
-// Combines all JSON files in the /scans dir into a single JSON
+// Combines all JSON files in the /data dir into a single JSON
 func combineJSON() error {
-    dir := "./scans"
+    dir := "./data"
 
     // holds json data & file count
     var data []models.House

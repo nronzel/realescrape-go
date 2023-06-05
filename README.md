@@ -105,7 +105,7 @@ in as an argument.
 go run main.go "Miami FL"
 ```
 Running `main.go` will connect to the MongoDB collection, perform the data
-extraction, merge all JSON documents in the /scans directory into a `master.json`
+extraction, merge all JSON documents in the /data directory into a `master.json`
 file, uploads all of the entries in `master.json` to the MongoDB collection,
 and then starts the API. The endpoint is accessible at `localhost:3000/houses`.
 
@@ -124,7 +124,7 @@ CLI.
 When the program is complete, you will see some stats in the console on how many
 listings were scraped, how long it took, etc.
 
-A CSV and JSON file will be generated and saved in the `scans` folder, located
+A CSV and JSON file will be generated and saved in the `data` folder, located
 at the root of the project directory. This folder will be created if it doesn't
 already exist.
 

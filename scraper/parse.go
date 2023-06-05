@@ -56,9 +56,9 @@ func parseHouse(e *colly.HTMLElement) models.House {
 
 func writeHousesToCSV(houses []models.House) error {
 	location := strings.ReplaceAll(os.Args[1], " ", "-")
-	filePath := filepath.Join("scans", fmt.Sprintf("%s.csv", location))
+	filePath := filepath.Join("data", fmt.Sprintf("%s.csv", location))
 
-	// Create the "scans" directory if it doesn't exist
+	// Create the "data" directory if it doesn't exist
 	if err := os.MkdirAll(filepath.Dir(filePath), 0755); err != nil {
 		return err
 	}
@@ -104,7 +104,7 @@ func writeHousesToCSV(houses []models.House) error {
 
 func writeHousesToJson(houses []models.House) error {
 	location := strings.ReplaceAll(os.Args[1], " ", "-")
-	filePath := filepath.Join("scans", fmt.Sprintf("%s.json", location))
+	filePath := filepath.Join("data", fmt.Sprintf("%s.json", location))
 	if err := os.MkdirAll(filepath.Dir(filePath), 0755); err != nil {
 		return err
 	}
