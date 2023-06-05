@@ -1,4 +1,4 @@
-# realescrape-go ![go](https://img.shields.io/github/languages/top/nronzel/realescrape-go?style=flat-square)
+# realescrape-go ![go](https://img.shields.io/github/languages/top/nronzel/realescrape-go?style=flat-square) ![go-version](https://img.shields.io/badge/Go-v1.20-blue)
 
 Rewrite of my [Python based scraper](https://github.com/nronzel/realescrape)
 in Go using the [Colly](https://github.com/gocolly/colly) web scraping framework.
@@ -127,12 +127,6 @@ listings were scraped, how long it took, etc.
 A CSV and JSON file will be generated and saved in the `scans` folder, located
 at the root of the project directory. This folder will be created if it doesn't
 already exist.
-
-## DevLog
-
-Implemented MongoDB. Uses the URL of each listing as the unique key. More work needs
-to be done to handle updating existing entries, currently it will just error out
-if there is a duplicate entry.
 
 ### Issues
 
