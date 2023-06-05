@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/gocolly/colly"
-    "github.com/nronzel/realescrape-go/models"
+	"github.com/nronzel/realescrape-go/models"
 )
 
 func parseHouse(e *colly.HTMLElement) models.House {

@@ -111,6 +111,10 @@ I realize that a house may have more sqft than lotsize if it is a taller
 building like an apartment or condo building. Ideally these get filtered out
 when searching for single family homes only which makes these ratios actually
 mean something.
+
+There are also issues if the data in the listing itself isn't properly uploaded.
+Some houses do not have sqft listed or sometimes they put the lot size as the
+sqft of the home.
 */
 func htyRatios(houseSqft, lotSqft string) (string, string) {
 	if houseSqft == "" || lotSqft == "" {

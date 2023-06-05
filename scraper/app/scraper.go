@@ -9,6 +9,7 @@ import (
 	"github.com/gocolly/colly"
 	"github.com/nronzel/realescrape-go/db"
 	"github.com/nronzel/realescrape-go/models"
+    "github.com/nronzel/realescrape-go/scraper/"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -62,7 +63,7 @@ func RunScraper(collection *mongo.Collection, location string) {
 	url := baseURL + options
 
 	houses := []models.House{}
-	c := getCollector()
+	c := scraper.GetCollector()
 
 	c.OnHTML("li[data-testid='result-card']", func(e *colly.HTMLElement) {
 		houses = append(houses, parseHouse(e))
