@@ -7,10 +7,10 @@ import (
 	"io/ioutil"
 	"log"
 
+	"github.com/nronzel/realescrape-go/models"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-    "github.com/nronzel/realescrape-go/models"
 )
 
 func ConnectMongo() *mongo.Collection {
@@ -65,8 +65,8 @@ func InsertMongo(collection *mongo.Collection) {
 		log.Printf("Error umarshaling json: %v\n", err)
 	}
 
-    // Filters by unique key, and updates the entry if it exists, else creates
-    // a new entry.
+	// Filters by unique key, and updates the entry if it exists, else creates
+	// a new entry.
 	for _, h := range houses {
 		filter := bson.M{"link": h.Link}
 		update := bson.M{"$set": h}
