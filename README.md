@@ -118,8 +118,8 @@ and then starts the API. The endpoint is accessible at `localhost:3000/houses`.
 `"90210"` - you can also just use a zip code
 
 > Currently will not work for full state searches (e.g. "Florida"). The url can't
-take a radius parameter. This may be remedied in the future by taking an argument
-flag at the console.
+take a radius parameter. This will be remedied in the future when it is a proper
+CLI.
 
 When the program is complete, you will see some stats in the console on how many
 listings were scraped, how long it took, etc.
