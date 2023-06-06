@@ -16,6 +16,7 @@ TODO:
 - [x] ~MongoDB~
 - [x] ~API endpoint~
 - [ ] Unit tests for the DB and API
+- [ ] Make API a little more robust
 - [ ] Front End
 - [ ] Dockerize the app
 - [x] ~Split code into separate packages for easier maintanability~
@@ -49,9 +50,10 @@ Uses the [Echo](https://echo.labstack.com) framework for the API.
 Currently has a GET endpoint that retrieves all items in the MongoDB
 collection.
 
-I will be implementing more endpoints in the coming weeks and will also put
+I will be implementing more endpoints in the coming weeks and may also put
 some basic authentication in just as a basic layer of security and as a way
-to learn how to even do so as this is my first API.
+to learn how to even do so as this is my first API. Currently the auth is not
+a priority.
 
 ## Installation
 
