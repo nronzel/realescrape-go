@@ -7,35 +7,25 @@ in Go using the [Colly](https://github.com/gocolly/colly) web scraping framework
 
 ## Upcoming
 
+TODO:
 - [x] ~lotsize conversion~
 - [x] ~ratios~
 - [x] ~split utility functions into separate modules~
 - [x] ~export to JSON~
 - [x] ~combine json files into a master file with all data~
-
--- These will be implemented once I create a proper CLI for this program.
-
-Custom parameters:
-- [ ] beds
-- [ ] baths
-- [ ] sqft
-- [ ] max-price
-- [ ] single/multi family
-- [x] radius
-
-TODO:
 - [x] ~MongoDB~
 - [x] ~API endpoint~
 - [ ] Unit tests for the DB and API
 - [ ] Front End
+- [ ] Dockerize the app
 - [x] ~Split code into separate packages for easier maintanability~
-- [ ] Create a proper CLI to set the parameters rather than taking arguments
 
 ## Description
 
 Simple web scraper for Realtor.com.
 
 This program is intended to be run locally only.
+I do intend on creating Docker files so you can just run this with Docker.
 
 It also requires a MongoDB instance to be running locally on the default port
 with no credentials.
@@ -52,18 +42,16 @@ Currently has the following fixed search parameters:
 - Hides foreclosures
 - Sorts by newest listings
 
-I will be implementing logic to make most of the search parameters dynamic.
+#### API
 
-Since the data is being stored in a CSV file you could always create filters
-and sort data yourself once it is scraped.
+Uses the [Echo](https://echo.labstack.com) framework for the API.
 
-A frontend will be developed as well that can be hosted locally to easily
-view and filter through data.
+Currently has a GET endpoint that retrieves all items in the MongoDB
+collection.
 
-##### API
-
-The API is a very simple Echo server with a single GET endpoint to retrieve
-all of the houses in the Mongo collection.
+I will be implementing more endpoints in the coming weeks and will also put
+some basic authentication in just as a basic layer of security and as a way
+to learn how to even do so as this is my first API.
 
 ## Installation
 
@@ -118,8 +106,7 @@ and then starts the API. The endpoint is accessible at `localhost:3000/houses`.
 `"90210"` - you can also just use a zip code
 
 > Currently will not work for full state searches (e.g. "Florida"). The url can't
-take a radius parameter. This will be remedied in the future when it is a proper
-CLI.
+take a radius parameter. This will be remedied in the future.
 
 When the program is complete, you will see some stats in the console on how many
 listings were scraped, how long it took, etc.
