@@ -16,16 +16,21 @@ import (
 
 func getAllHouses(collection *mongo.Collection) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		pageParam := c.QueryParam("page")
-		page, err := strconv.Atoi(pageParam)
-		if err != nil || page < 1 {
-			page = 1
+		var page, limit int
+		var err error
+
+		if pageParam := c.QueryParam("page"); pageParam != "" {
+			page, err = strconv.Atoi(pageParam)
+			if err != nil || page < 1 {
+				page = 1
+			}
 		}
 
-		limitParam := c.QueryParam("limit")
-		limit, err := strconv.Atoi(limitParam)
-		if err != nil || limit < 1 {
-			limit = 20
+		if limitParam := c.QueryParam("limit"); limitParam != "" {
+			limit, err = strconv.Atoi(limitParam)
+			if err != nil || limit < 1 {
+				limit = 20
+			}
 		}
 
 		// Create context with timeout
@@ -35,6 +40,9 @@ func getAllHouses(collection *mongo.Collection) echo.HandlerFunc {
 		defer cancel()
 
 		findOptions := options.Find()
+		if limit != 0 {
+			findOptions.SetLimit(int64(limit))
+		}
 		findOptions.SetLimit(int64(limit))
 		findOptions.SetSkip(int64(page * limit))
 
