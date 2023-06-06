@@ -1,4 +1,4 @@
 *.csv
 *.json
-./frontend/realescrape/node_modules
+frontend/realescrape/node_modules
 
