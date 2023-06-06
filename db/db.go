@@ -13,21 +13,21 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func ConnectMongo() *mongo.Collection {
+func ConnectMongo() (*mongo.Collection, error) {
 
 	uri := "mongodb://127.0.0.1:27017"
 
 	client, err := mongo.Connect(context.Background(), options.Client().ApplyURI(uri))
 
 	if err != nil {
-		log.Println("Error connecting to DB", err)
+		return nil, fmt.Errorf("Error connecting to DB", err)
 	}
 
 	// Ping Mongo
 	err = client.Ping(context.Background(), nil)
 
 	if err != nil {
-		log.Printf("Error pinging database: %v\n", err)
+		return nil, fmt.Errorf("Error pinging database: %v\n", err)
 	}
 
 	fmt.Println("Connected to MongoDB")
@@ -44,25 +44,25 @@ func ConnectMongo() *mongo.Collection {
 
 	_, err = collection.Indexes().CreateOne(context.Background(), indexModel)
 	if err != nil {
-		log.Printf("Error: %v", err)
+		return nil, fmt.Errorf("Error: %v", err)
 	}
 
-	return collection
+	return collection, nil
 }
 
-func InsertMongo(collection *mongo.Collection) {
+func InsertMongo(collection *mongo.Collection) error {
 	// Read data from master.json
 	data, err := ioutil.ReadFile("master.json")
 
 	if err != nil {
-		log.Printf("Error: %v\n", err)
+		return fmt.Errorf("Error: %v\n", err)
 	}
 
 	var houses []models.House
 
 	err = json.Unmarshal(data, &houses)
 	if err != nil {
-		log.Printf("Error umarshaling json: %v\n", err)
+		return fmt.Errorf("Error umarshaling json: %v\n", err)
 	}
 
 	// Filters by unique key, and updates the entry if it exists, else creates
@@ -75,7 +75,8 @@ func InsertMongo(collection *mongo.Collection) {
 
 		_, err = collection.UpdateOne(context.Background(), filter, update, opts)
 		if err != nil {
-			log.Printf("Error updating/inserting data into collection: %v", err)
+			return fmt.Errorf("Error updating/inserting data into collection: %v", err)
 		}
 	}
+	return nil
 }

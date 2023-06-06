@@ -48,7 +48,7 @@ const (
 	agent    = "Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/113.0"
 )
 
-func RunScraper(collection *mongo.Collection, location string) {
+func RunScraper(collection *mongo.Collection, location string) error {
 	start := time.Now()
 
 	options := fmt.Sprintf(
@@ -94,7 +94,7 @@ func RunScraper(collection *mongo.Collection, location string) {
 
 	err := c.Visit(url)
 	if err != nil {
-		log.Fatal(err)
+		return fmt.Errorf("Error visiting URL: %v", err)
 	}
 
 	c.Wait()
@@ -102,14 +102,15 @@ func RunScraper(collection *mongo.Collection, location string) {
 	logStats(start, houses)
 
 	if err := writeBothFiles(houses); err != nil {
-		log.Fatalf("Error while writing files: %v", err)
+		return fmt.Errorf("Error while writing files: %v", err)
 	}
 
 	// Combine all JSON files located in /data
 	if err := combineJSON(); err != nil {
-		log.Fatalf("Error combining JSON files: %v", err)
+		return fmt.Errorf("Error combining JSON files: %v", err)
 	}
 
 	db.InsertMongo(collection)
 
+	return nil
 }
