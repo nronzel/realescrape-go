@@ -4,24 +4,42 @@ import (
 	"context"
 	"log"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/labstack/echo/v4"
 	"github.com/nronzel/realescrape-go/models"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func getAllHouses(collection *mongo.Collection) echo.HandlerFunc {
 	return func(c echo.Context) error {
+		pageParam := c.QueryParam("page")
+		page, err := strconv.Atoi(pageParam)
+		if err != nil || page < 1 {
+			page = 1
+		}
+
+		limitParam := c.QueryParam("limit")
+		limit, err := strconv.Atoi(limitParam)
+		if err != nil || limit < 1 {
+			limit = 20
+		}
+
 		// Create context with timeout
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 
 		// Call the cancel function to avoid context leak
 		defer cancel()
 
+		findOptions := options.Find()
+		findOptions.SetLimit(int64(limit))
+		findOptions.SetSkip(int64(page * limit))
+
 		// Attempts to find all documents in MongoDB collection
-		cursor, err := collection.Find(ctx, bson.M{})
+		cursor, err := collection.Find(ctx, bson.M{}, findOptions)
 		if err != nil {
 			// Log the error
 			log.Printf("Failed to find houses: %v", err)
