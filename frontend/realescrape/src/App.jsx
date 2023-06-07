@@ -13,7 +13,11 @@ function App() {
     <div className="main">
       <Header />
       <SearchBar setData={setData} onSearch={setSearchPerformed} />
-      <ViewSwitcher viewState={viewState} setViewState={setViewState} />
+      <ViewSwitcher
+        viewState={viewState}
+        setViewState={setViewState}
+        setSearchPerformed={setSearchPerformed}
+      />
       {viewState() === "table" ? (
         <DataTable
           data={data}
