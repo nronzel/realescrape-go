@@ -15,11 +15,11 @@ func StartAPI(collection *mongo.Collection) {
 	// Enable CORS
 	e.Use(middleware.CORS())
 
-	// Register getAllHouses handler to /houses endpoint
-	// Responds to requests with all items in the MongoDB collection
+    // Assign handlers to endpoints
 	e.GET("/houses", getAllHouses(collection))
     e.GET("/houses/count", getHousesCount(collection))
 	e.POST("/scrape/:location", triggerScrape(collection))
+    e.POST("/cleardb", cleanHouse(collection))
 
 	// Start server on port localhost:3000
 	err := e.Start(":3000")
