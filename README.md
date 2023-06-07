@@ -5,6 +5,9 @@ in Go using the [Colly](https://github.com/gocolly/colly) web scraping framework
 
 > NOTE This project is for educational purposes only. Please use with care.
 
+Uploaded a basic frontend. It is not complete however, and currently has a bug
+with fetching the data properly.
+
 ## Upcoming
 
 TODO:
