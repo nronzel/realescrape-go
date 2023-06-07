@@ -8,6 +8,7 @@ in Go using the [Colly](https://github.com/gocolly/colly) web scraping framework
 ## Upcoming
 
 TODO:
+
 - [x] ~lotsize conversion~
 - [x] ~ratios~
 - [x] ~split utility functions into separate modules~
@@ -82,8 +83,16 @@ cd realescrape-go
 #### 3. Install dependencies
 
 In the root directory of the project, run
+
 ```bash
 go get .
+```
+
+You should also be able to just run the following command and it should install
+the dependencies automatically.
+
+```bash
+go run main.go
 ```
 
 #### 4. Run the program
@@ -94,6 +103,7 @@ in as an argument.
 ```bash
 go run main.go "Miami FL"
 ```
+
 Running `main.go` will connect to the MongoDB collection, perform the data
 extraction, merge all JSON documents in the /data directory into a `master.json`
 file, uploads all of the entries in `master.json` to the MongoDB collection,
@@ -108,7 +118,7 @@ and then starts the API. The endpoint is accessible at `localhost:3000/houses`.
 `"90210"` - you can also just use a zip code
 
 > Currently will not work for full state searches (e.g. "Florida"). The url can't
-take a radius parameter. This will be remedied in the future.
+> take a radius parameter. This will be remedied in the future.
 
 When the program is complete, you will see some stats in the console on how many
 listings were scraped, how long it took, etc.
