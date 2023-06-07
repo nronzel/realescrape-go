@@ -51,10 +51,10 @@ const (
 
 func RunScraper(collection *mongo.Collection, location string) error {
 	start := time.Now()
-    fmt.Println("Encoded location", location)
+
 	decodedLocation, err := url.QueryUnescape(location)
     decodedLocation = strings.ReplaceAll(decodedLocation, " ", "_")
-    fmt.Println("Decoded location", decodedLocation)
+
 	if err != nil {
 		return fmt.Errorf("Failed to decode location: %v", err)
 	}

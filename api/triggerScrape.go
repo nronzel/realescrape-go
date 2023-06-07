@@ -13,12 +13,10 @@ import (
 func triggerScrape(collection *mongo.Collection) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		locationParam := c.Param("location")
-		log.Printf("Location parameter (encoded): %s", locationParam)
 		location, err := url.QueryUnescape(locationParam)
 		if err != nil {
 			return echo.NewHTTPError(http.StatusBadRequest, "Failed to decode location param.")
 		}
-		log.Printf("Location (decoded): %s", location)
 
 		go func() {
 			err := scraper.RunScraper(collection, location)
