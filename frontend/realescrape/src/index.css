@@ -30,3 +30,7 @@ a:active,
 a:focus {
   color: #828df8;
 }
+
+.hover:hover {
+  background-color: #090e19 !important;
+}
