@@ -1,48 +1,87 @@
-import { createEffect, onMount, createSignal, For } from "solid-js";
+import { createEffect, onMount, createSignal, For, onCleanup } from "solid-js";
 
 const DataTable = (props) => {
-  const [data, setData] = createSignal([]);
   const [page, setPage] = createSignal(1);
   const [hasMore, setHasMore] = createSignal(true);
   const [total, setTotal] = createSignal(0);
+  const [fetching, setFetching] = createSignal(false); // New Signal
 
   async function fetchCount() {
-    const url = "http://localhost:3000/houses/count";
-    const response = await fetch(url);
+    const response = await fetch("http://localhost:3000/houses/count");
     const json = await response.json();
 
     setTotal(json.count);
   }
+
   async function fetchData(currentPage, append = false) {
+    setFetching(true); // Start fetching
+
     const url = `http://localhost:3000/houses?page=${currentPage}&limit=20`;
     const response = await fetch(url);
     const json = await response.json();
 
-    if (json.length === 0) setHasMore(false);
+    if (json.length === 0 || (currentPage - 1) * 20 + json.length >= total()) {
+      setHasMore(false);
+    } else {
+      setHasMore(true);
+    }
 
     if (append) {
-      setData((oldData) => [...oldData, ...json]);
+      props.setData((oldData) => [...oldData, ...json]);
     } else {
-      setData(json);
+      props.setData(json);
     }
+
+    setFetching(false); // End fetching
   }
 
   async function fetchAllData() {
+    setFetching(true); // Start fetching
+
     const url = "http://localhost:3000/houses";
     const response = await fetch(url);
     const json = await response.json();
 
-    setData(json);
+    props.setData(json);
     setHasMore(false);
+
+    setFetching(false); // End fetching
   }
+
+  async function deleteData() {
+    const url = "http://localhost:3000/cleardb";
+    const response = await fetch(url, { method: "POST" });
+    const json = await response.json();
+
+    console.log(json);
+  }
+
+  let intervalId = null;
 
   onMount(() => {
     fetchCount();
     fetchData(page());
+    if (total() > 20) {
+      setHasMore(true);
+    }
+    intervalId = setInterval(() => {
+      if (!fetching()) {
+        // Only perform fetch when previous one is completed
+        fetchCount();
+        fetchData(page());
+      }
+    }, 2000);
+  });
+
+  onCleanup(() => {
+    if (intervalId) {
+      clearInterval(intervalId);
+    }
   });
 
   createEffect(() => {
     if (props.searchPerformed()) {
+      total() > 20 ? setHasMore(true) : "";
       setPage(1);
       fetchData(1);
       props.onSearch(false);
@@ -51,7 +90,7 @@ const DataTable = (props) => {
 
   createEffect(() => {
     const currentPage = page();
-    if (currentPage > 1 && data().length < total())
+    if (currentPage > 1 && props.data().length < total())
       fetchData(currentPage, true);
   });
 
@@ -78,12 +117,17 @@ const DataTable = (props) => {
           <div className="stat place-items-center">
             <div className="stat-title">Clear Database</div>
             <div className="stat-value">
-              <button className="btn btn-xs bg-red-600 hover:bg-red-800 hover:text-white ">Delete</button>
+              <button
+                className="btn btn-xs bg-red-600 hover:bg-red-800 hover:text-white"
+                onClick={deleteData}
+              >
+                Delete
+              </button>
             </div>
           </div>
         </div>
       }
-      {data().length > 0 ? (
+      {props.data().length > 0 ? (
         <>
           <div className="overflow-x-auto w-11/12">
             <table
@@ -113,7 +157,7 @@ const DataTable = (props) => {
                   <th>CrawlTime</th>
                 </tr>
               </thead>
-              <For each={data()}>
+              <For each={props.data()}>
                 {(item, index) => (
                   <tr className="hover">
                     <td>{index() + 1}</td>
