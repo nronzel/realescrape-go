@@ -18,6 +18,7 @@ func StartAPI(collection *mongo.Collection) {
 	// Register getAllHouses handler to /houses endpoint
 	// Responds to requests with all items in the MongoDB collection
 	e.GET("/houses", getAllHouses(collection))
+	e.POST("/scrape/:location", triggerScrape(collection))
 
 	// Start server on port localhost:3000
 	err := e.Start(":3000")
