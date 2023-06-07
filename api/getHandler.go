@@ -29,7 +29,7 @@ func getAllHouses(collection *mongo.Collection) echo.HandlerFunc {
 		if limitParam := c.QueryParam("limit"); limitParam != "" {
 			limit, err = strconv.Atoi(limitParam)
 			if err != nil || limit < 1 {
-				limit = 20
+				limit = 30
 			}
 		}
 
@@ -44,7 +44,7 @@ func getAllHouses(collection *mongo.Collection) echo.HandlerFunc {
 			findOptions.SetLimit(int64(limit))
 		}
 		findOptions.SetLimit(int64(limit))
-		findOptions.SetSkip(int64(page * limit))
+		findOptions.SetSkip(int64((page - 1) * limit))
 
 		// Attempts to find all documents in MongoDB collection
 		cursor, err := collection.Find(ctx, bson.M{}, findOptions)
