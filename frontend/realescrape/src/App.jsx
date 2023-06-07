@@ -6,18 +6,20 @@ import ViewSwitcher from "./components/ViewSwitcher.jsx";
 
 function App() {
   const [searchPerformed, setSearchPerformed] = createSignal(false);
-  const [searchQuery, setSearchQuery] = createSignal("");
   const [viewState, setViewState] = createSignal("table");
+  const [data, setData] = createSignal([]);
 
   return (
     <div className="main">
       <Header />
-      <SearchBar onSearch={setSearchPerformed} onQuery={setSearchQuery} />
+      <SearchBar setData={setData} onSearch={setSearchPerformed} />
       <ViewSwitcher viewState={viewState} setViewState={setViewState} />
       {viewState() === "table" ? (
         <DataTable
+          data={data}
+          setData={setData}
+          onSearch={setSearchPerformed}
           searchPerformed={searchPerformed}
-          searchQuery={searchQuery}
         />
       ) : (
         <div>stat view</div>

@@ -14,9 +14,9 @@ const SearchBar = (props) => {
       }
 
       const data = await response.json();
-      console.log(data);
 
       props.onSearch(true);
+      props.setData(data);
     } catch (error) {
       console.error("Error:", error);
     }
