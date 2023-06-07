@@ -4,7 +4,15 @@ const DataTable = (props) => {
   const [data, setData] = createSignal([]);
   const [page, setPage] = createSignal(1);
   const [hasMore, setHasMore] = createSignal(true);
+  const [total, setTotal] = createSignal(0);
 
+  async function fetchCount() {
+    const url = "http://localhost:3000/houses/count";
+    const response = await fetch(url);
+    const json = await response.json();
+
+    setTotal(json.count);
+  }
   async function fetchData(currentPage, append = false) {
     const url = `http://localhost:3000/houses?page=${currentPage}&limit=20`;
     const response = await fetch(url);
@@ -25,10 +33,13 @@ const DataTable = (props) => {
     const json = await response.json();
 
     setData(json);
-    // setHasMore(false);
+    setHasMore(false);
   }
 
-  onMount(() => fetchData(page()));
+  onMount(() => {
+    fetchCount();
+    fetchData(page());
+  });
 
   createEffect(() => {
     if (props.searchPerformed()) {
@@ -40,11 +51,38 @@ const DataTable = (props) => {
 
   createEffect(() => {
     const currentPage = page();
-    if (currentPage > 1) fetchData(currentPage, true);
+    if (currentPage > 1 && data().length < total())
+      fetchData(currentPage, true);
   });
 
   return (
     <div className="flex flex-col justify-center items-center">
+      {
+        <div
+          className="
+          stats
+          stats-vertical
+          lg:stats-horizontal
+          shadow
+          border
+          border-gray-700
+          mb-5
+          "
+        >
+          <div className="stat place-items-center">
+            <div className="stat-title">Total Listings</div>
+            <div className="stat-value text-accent">{total()}</div>
+            <div className="stat-desc"></div>
+          </div>
+
+          <div className="stat place-items-center">
+            <div className="stat-title">Clear Database</div>
+            <div className="stat-value">
+              <button className="btn btn-xs bg-red-600 hover:bg-red-800 hover:text-white ">Delete</button>
+            </div>
+          </div>
+        </div>
+      }
       {data().length > 0 ? (
         <>
           <div className="overflow-x-auto w-11/12">
