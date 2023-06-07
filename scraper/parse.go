@@ -54,8 +54,9 @@ func parseHouse(e *colly.HTMLElement) models.House {
 	return temp
 }
 
-func writeHousesToCSV(houses []models.House) error {
-	location := strings.ReplaceAll(os.Args[1], " ", "-")
+func writeHousesToCSV(houses []models.House, location string) error {
+	location = strings.ReplaceAll(location, " ", "-")
+
 	filePath := filepath.Join("data", fmt.Sprintf("%s.csv", location))
 
 	// Create the "data" directory if it doesn't exist
@@ -102,8 +103,7 @@ func writeHousesToCSV(houses []models.House) error {
 	return writeErr
 }
 
-func writeHousesToJson(houses []models.House) error {
-	location := strings.ReplaceAll(os.Args[1], " ", "-")
+func writeHousesToJson(houses []models.House, location string) error {
 	filePath := filepath.Join("data", fmt.Sprintf("%s.json", location))
 	if err := os.MkdirAll(filepath.Dir(filePath), 0755); err != nil {
 		return err
@@ -125,13 +125,13 @@ func writeHousesToJson(houses []models.House) error {
 	return nil
 }
 
-func writeBothFiles(houses []models.House) error {
+func writeBothFiles(houses []models.House, location string) error {
 
-	if err := writeHousesToJson(houses); err != nil {
+	if err := writeHousesToJson(houses, location); err != nil {
 		return fmt.Errorf("error writing houses to JSON: %w", err)
 	}
 
-	if err := writeHousesToCSV(houses); err != nil {
+	if err := writeHousesToCSV(houses, location); err != nil {
 		return fmt.Errorf("error writing houses to CSV: %w", err)
 	}
 

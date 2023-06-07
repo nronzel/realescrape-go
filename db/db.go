@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 
 	"github.com/nronzel/realescrape-go/models"
 	"go.mongodb.org/mongo-driver/bson"
@@ -20,7 +19,7 @@ func ConnectMongo() (*mongo.Collection, error) {
 	client, err := mongo.Connect(context.Background(), options.Client().ApplyURI(uri))
 
 	if err != nil {
-		return nil, fmt.Errorf("Error connecting to DB", err)
+        return nil, fmt.Errorf("Error connecting to DB: %v", err)
 	}
 
 	// Ping Mongo

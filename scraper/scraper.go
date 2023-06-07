@@ -3,6 +3,7 @@ package scraper
 import (
 	"fmt"
 	"log"
+	"net/url"
 	"strings"
 	"time"
 
@@ -50,10 +51,17 @@ const (
 
 func RunScraper(collection *mongo.Collection, location string) error {
 	start := time.Now()
+    fmt.Println("Encoded location", location)
+	decodedLocation, err := url.QueryUnescape(location)
+    decodedLocation = strings.ReplaceAll(decodedLocation, " ", "_")
+    fmt.Println("Decoded location", decodedLocation)
+	if err != nil {
+		return fmt.Errorf("Failed to decode location: %v", err)
+	}
 
 	options := fmt.Sprintf(
 		"%s/beds-1/baths-1/%s/%s/age-3+/pnd-hide/fc-hide/55p-hide/%s/sby-6/",
-		location,
+		decodedLocation,
 		homeType,
 		minPrice,
 		radius,
@@ -92,7 +100,8 @@ func RunScraper(collection *mongo.Collection, location string) error {
 		}
 	})
 
-	err := c.Visit(url)
+	err = c.Visit(url)
+
 	if err != nil {
 		return fmt.Errorf("Error visiting URL: %v", err)
 	}
@@ -101,7 +110,8 @@ func RunScraper(collection *mongo.Collection, location string) error {
 
 	logStats(start, houses)
 
-	if err := writeBothFiles(houses); err != nil {
+    // Writes CSV and JSON file named with location
+	if err := writeBothFiles(houses, location); err != nil {
 		return fmt.Errorf("Error while writing files: %v", err)
 	}
 
