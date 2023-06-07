@@ -56,26 +56,11 @@ const DataTable = (props) => {
     console.log(json);
   }
 
-  let intervalId = null;
-
   onMount(() => {
     fetchCount();
     fetchData(page());
     if (total() > 20) {
       setHasMore(true);
-    }
-    intervalId = setInterval(() => {
-      if (!fetching()) {
-        // Only perform fetch when previous one is completed
-        fetchCount();
-        fetchData(page());
-      }
-    }, 2000);
-  });
-
-  onCleanup(() => {
-    if (intervalId) {
-      clearInterval(intervalId);
     }
   });
 
@@ -83,6 +68,7 @@ const DataTable = (props) => {
     if (props.searchPerformed()) {
       total() > 20 ? setHasMore(true) : "";
       setPage(1);
+      fetchCount();
       fetchData(1);
       props.onSearch(false);
     }
@@ -110,7 +96,7 @@ const DataTable = (props) => {
         >
           <div className="stat place-items-center">
             <div className="stat-title">Total Listings</div>
-            <div className="stat-value text-accent">{total()}</div>
+            <div className="stat-value text-white">{total()}</div>
             <div className="stat-desc"></div>
           </div>
 
@@ -118,7 +104,7 @@ const DataTable = (props) => {
             <div className="stat-title">Clear Database</div>
             <div className="stat-value">
               <button
-                className="btn btn-xs bg-red-600 hover:bg-red-800 hover:text-white"
+                className="btn btn-xs btn-outline btn-error hover:bg-red-800 hover:text-white"
                 onClick={deleteData}
               >
                 Delete
