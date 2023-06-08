@@ -48,8 +48,7 @@ func parseHouse(e *colly.HTMLElement) models.House {
 
 	// Add in current time & date when listing was scraped
 	currTime := time.Now()
-	dateTime := currTime.Format("2006-01-02 15:04:05")
-	temp.CrawlTime = dateTime
+	temp.CrawlTime = currTime
 
 	return temp
 }
@@ -90,10 +89,11 @@ func writeHousesToCSV(houses []models.House, location string) error {
 
 	// Write data
 	for _, h := range houses {
+		crawlTimeStr := h.CrawlTime.Format("2006-01-02 15:04:05")
 		record := []string{
 			h.Price, h.Beds, h.Baths, h.Sqft, h.LotSize,
 			h.LotUnit, h.LotSqft, h.Hty, h.HtyPcnt, h.Street, h.City,
-			h.State, h.Zip, h.Link, h.CrawlTime,
+			h.State, h.Zip, h.Link, crawlTimeStr,
 		}
 		if err := writer.Write(record); err != nil {
 			writeErr = err
