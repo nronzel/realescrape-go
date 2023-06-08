@@ -1,7 +1,6 @@
 package api
 
 import (
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -20,13 +19,8 @@ import (
 func cleanHouse(collection *mongo.Collection) echo.HandlerFunc {
 	return func(c echo.Context) error {
 
-		dir, err := os.Getwd()
-		if err != nil {
-			log.Fatal(err)
-		}
-		fmt.Println(dir)
 		// Delete everything in MongoDB collection
-		_, err = collection.DeleteMany(c.Request().Context(), bson.D{})
+		_, err := collection.DeleteMany(c.Request().Context(), bson.D{})
 		if err != nil {
 			return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 		}
@@ -50,10 +44,12 @@ func cleanHouse(collection *mongo.Collection) echo.HandlerFunc {
 					return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 				}
 			}
+			log.Println("Clean house operation successful.")
 		}
 
 		return c.JSON(http.StatusOK, echo.Map{
 			"message": "Clean house operation completed successfully.",
 		})
+
 	}
 }
