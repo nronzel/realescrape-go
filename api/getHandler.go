@@ -46,6 +46,8 @@ func getAllHouses(collection *mongo.Collection) echo.HandlerFunc {
 		findOptions.SetLimit(int64(limit))
 		findOptions.SetSkip(int64((page - 1) * limit))
 
+		findOptions.SetSort(bson.D{{"crawlTime", -1}})
+
 		// Attempts to find all documents in MongoDB collection
 		cursor, err := collection.Find(ctx, bson.M{}, findOptions)
 		if err != nil {
