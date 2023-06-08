@@ -44,8 +44,9 @@ func cleanHouse(collection *mongo.Collection) echo.HandlerFunc {
 					return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 				}
 			}
-			log.Println("Clean house operation successful.")
 		}
+
+		log.Println("Clean house operation completed successfully.")
 
 		return c.JSON(http.StatusOK, echo.Map{
 			"message": "Clean house operation completed successfully.",
