@@ -26,7 +26,7 @@ function App() {
           searchPerformed={searchPerformed}
         />
       ) : (
-        <div>stat view</div>
+        <p>Stats page</p>
       )}
     </div>
   );
