@@ -1,10 +1,13 @@
-import { createEffect, onMount, createSignal, For, onCleanup } from "solid-js";
+import { createEffect, onMount, createSignal, For } from "solid-js";
+import useSort from "./useSort";
+import SortableHeader from "./SortableHeader";
 
 const DataTable = (props) => {
   const [page, setPage] = createSignal(1);
   const [hasMore, setHasMore] = createSignal(true);
   const [total, setTotal] = createSignal(0);
-  const [fetching, setFetching] = createSignal(false); // New Signal
+  const [sortingNeeded, setSortingNeeded] = createSignal(false);
+  const sort = useSort("Price");
 
   async function fetchCount() {
     const response = await fetch("http://localhost:3000/houses/count");
@@ -14,8 +17,6 @@ const DataTable = (props) => {
   }
 
   async function fetchData(currentPage, append = false) {
-    setFetching(true); // Start fetching
-
     const url = `http://localhost:3000/houses?page=${currentPage}&limit=20`;
     const response = await fetch(url);
     const json = await response.json();
@@ -31,21 +32,16 @@ const DataTable = (props) => {
     } else {
       props.setData(json);
     }
-
-    setFetching(false); // End fetching
+    setSortingNeeded(true);
   }
 
   async function fetchAllData() {
-    setFetching(true); // Start fetching
-
     const url = "http://localhost:3000/houses";
     const response = await fetch(url);
     const json = await response.json();
 
     props.setData(json);
     setHasMore(false);
-
-    setFetching(false); // End fetching
   }
 
   async function deleteData() {
@@ -57,14 +53,25 @@ const DataTable = (props) => {
   }
 
   onMount(() => {
-    fetchCount();
-    fetchData(page());
-    if (total() > 20) {
-      setHasMore(true);
+    fetchCount().then(() => {
+      fetchData(page());
+      if (total() > 20) {
+        setHasMore(true);
+      }
+    });
+  });
+
+  createEffect(() => {
+    if (!sortingNeeded()) return;
+    if (sortingNeeded()) {
+      const sortedData = sort.sortByColumn(props.data());
+      props.setData(sortedData);
+      setSortingNeeded(false);
     }
   });
 
   createEffect(() => {
+    if (!props.searchPerformed()) return;
     if (props.searchPerformed()) {
       total() > 20 ? setHasMore(true) : "";
       setPage(1);
@@ -96,7 +103,7 @@ const DataTable = (props) => {
         >
           <div className="stat place-items-center">
             <div className="stat-title">Total Listings</div>
-            <div className="stat-value text-white">{total()}</div>
+            <div className="stat-value">{total()}</div>
             <div className="stat-desc"></div>
           </div>
 
@@ -126,21 +133,135 @@ const DataTable = (props) => {
               <thead>
                 <tr>
                   <th></th>
-                  <th>Price</th>
-                  <th>Beds</th>
-                  <th>Baths</th>
-                  <th>Sqft</th>
-                  <th>LotSize</th>
-                  <th>LotUnit</th>
-                  <th>LotSqft</th>
-                  <th>Hty</th>
-                  <th>HtyPcnt</th>
-                  <th>Street</th>
-                  <th>City</th>
-                  <th>State</th>
-                  <th>Zip</th>
-                  <th>Link</th>
-                  <th>CrawlTime</th>
+                  <SortableHeader
+                    column="Price"
+                    handleSort={(column) => {
+                      sort.handleSort(column);
+                      setSortingNeeded(true);
+                    }}
+                  >
+                    Price
+                  </SortableHeader>
+                  <SortableHeader
+                    column="Beds"
+                    handleSort={(column) => {
+                      sort.handleSort(column);
+                      setSortingNeeded(true);
+                    }}
+                  >
+                    Beds
+                  </SortableHeader>
+                  <SortableHeader
+                    column="Baths"
+                    handleSort={(column) => {
+                      sort.handleSort(column);
+                      setSortingNeeded(true);
+                    }}
+                  >
+                    Baths
+                  </SortableHeader>
+                  <SortableHeader
+                    column="Sqft"
+                    handleSort={(column) => {
+                      sort.handleSort(column);
+                      setSortingNeeded(true);
+                    }}
+                  >
+                    Sqft
+                  </SortableHeader>
+                  <SortableHeader
+                    column="LotSize"
+                    handleSort={(column) => {
+                      sort.handleSort(column);
+                      setSortingNeeded(true);
+                    }}
+                  >
+                    LotSize
+                  </SortableHeader>
+                  <SortableHeader
+                    column="LotUnit"
+                    handleSort={(column) => {
+                      sort.handleSort(column);
+                      setSortingNeeded(true);
+                    }}
+                  >
+                    LotUnit
+                  </SortableHeader>
+                  <SortableHeader
+                    column="LotSqft"
+                    handleSort={(column) => {
+                      sort.handleSort(column);
+                      setSortingNeeded(true);
+                    }}
+                  >
+                    LotSqft
+                  </SortableHeader>
+                  <SortableHeader
+                    column="Hty"
+                    handleSort={(column) => {
+                      sort.handleSort(column);
+                      setSortingNeeded(true);
+                    }}
+                  >
+                    Hty
+                  </SortableHeader>
+                  <SortableHeader
+                    column="HtyPcnt"
+                    handleSort={(column) => {
+                      sort.handleSort(column);
+                      setSortingNeeded(true);
+                    }}
+                  >
+                    HtyPcnt
+                  </SortableHeader>
+                  <SortableHeader
+                    column="Street"
+                    handleSort={(column) => {
+                      sort.handleSort(column);
+                      setSortingNeeded(true);
+                    }}
+                  >
+                    Street
+                  </SortableHeader>
+                  <SortableHeader
+                    column="City"
+                    handleSort={(column) => {
+                      sort.handleSort(column);
+                      setSortingNeeded(true);
+                    }}
+                  >
+                    City
+                  </SortableHeader>
+                  <SortableHeader
+                    column="State"
+                    handleSort={(column) => {
+                      sort.handleSort(column);
+                      setSortingNeeded(true);
+                    }}
+                  >
+                    State
+                  </SortableHeader>
+                  <SortableHeader
+                    column="Zip"
+                    handleSort={(column) => {
+                      sort.handleSort(column);
+                      setSortingNeeded(true);
+                    }}
+                  >
+                    Zip
+                  </SortableHeader>
+                  <SortableHeader column="Link" handleSort={sort.handleSort}>
+                    Link
+                  </SortableHeader>
+                  <SortableHeader
+                    column="CrawlTime"
+                    handleSort={(column) => {
+                      sort.handleSort(column);
+                      setSortingNeeded(true);
+                    }}
+                  >
+                    CrawlTime
+                  </SortableHeader>
                 </tr>
               </thead>
               <For each={props.data()}>
@@ -200,7 +321,7 @@ const DataTable = (props) => {
               Load More
             </button>
             <button
-              className="btn btn-sm btn-accent"
+              className="btn btn-outline btn-sm btn-neutral"
               onClick={fetchAllData}
               disabled={!hasMore()}
             >
