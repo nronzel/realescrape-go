@@ -5,8 +5,7 @@ in Go using the [Colly](https://github.com/gocolly/colly) web scraping framework
 
 > NOTE This project is for educational purposes only. Please use with care.
 
-Uploaded a basic frontend. It is not complete however, and currently has a bug
-with fetching the data properly.
+
 
 ## Upcoming
 
@@ -20,7 +19,8 @@ TODO:
 - [x] ~MongoDB~
 - [x] ~API endpoint~
 - [ ] Unit tests for the DB and API
-- [ ] Make API a little more robust
+- [x] ~Make API a little more robust~
+- [ ] Websockets for updates
 - [ ] Front End
 - [ ] Dockerize the app
 - [x] ~Split code into separate packages for easier maintanability~
@@ -100,17 +100,16 @@ go run main.go
 
 #### 4. Run the program
 
-Run the program with the following command, with the location you are interested
-in as an argument.
+Run the program with the following command
 
 ```bash
-go run main.go "Miami FL"
+go run main.go
 ```
-
-Running `main.go` will connect to the MongoDB collection, perform the data
-extraction, merge all JSON documents in the /data directory into a `master.json`
-file, uploads all of the entries in `master.json` to the MongoDB collection,
-and then starts the API. The endpoint is accessible at `localhost:3000/houses`.
+When you run `main.go` it will connect to the MongoDB and start the API
+on `localhost:3000`. You can then go into the `frontend/realescrape/` folder
+and run the command `pnpm run start` or `npm run start` and it will start the
+frontend on `localhost:3100`. Visit `localhost:3100` in your browser to
+interact with the database.
 
 **Locations must be entered in the following formats:**
 
@@ -126,21 +125,12 @@ and then starts the API. The endpoint is accessible at `localhost:3000/houses`.
 When the program is complete, you will see some stats in the console on how many
 listings were scraped, how long it took, etc.
 
-A CSV and JSON file will be generated and saved in the `data` folder, located
-at the root of the project directory. This folder will be created if it doesn't
-already exist.
-
 ### Issues
 
 #### Known Issues
 
-~will sometimes randomly not return data, but appear to scan each page.
-I am not sure what causes this, however you can just run the program again
-and it will work. A quick check at the console print of the number of listings
-scanned should tell you if it worked or not.~
-
-I believe the above issue is fixed by applying a min radius of 1 mile. I made
-radius a global const so it can be easily modified.
+Need to set up websockets so when the database updates it can update the
+frontend properly. For now, a manual refresh button will do.
 
 ---
 
