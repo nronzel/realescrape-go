@@ -1,15 +1,15 @@
 import { createEffect, createSignal } from "solid-js";
 
 const Header = () => {
-  const [theme, setTheme] = createSignal("true");
+  const [theme, setTheme] = createSignal(true);
 
-  const changeTheme = () => {
+  const changeTheme = (isNight) => {
     const html = document.documentElement;
 
-    if (html.getAttribute("data-theme") === "night") {
-      html.setAttribute("data-theme", "cmyk");
-    } else {
+    if (isNight) {
       html.setAttribute("data-theme", "night");
+    } else {
+      html.setAttribute("data-theme", "cmyk");
     }
   };
 
@@ -27,7 +27,11 @@ const Header = () => {
       <div className="flex-none">
         <label className="swap swap-rotate pr-5">
           {/* this hidden checkbox controls the state */}
-          <input type="checkbox" onChange={(e) => setTheme(e.target.checked)} />
+          <input
+            type="checkbox"
+            checked={theme()}
+            onChange={(e) => setTheme(e.target.checked)}
+          />
 
           {/* sun icon */}
           <svg
