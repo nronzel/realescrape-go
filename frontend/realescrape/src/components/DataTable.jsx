@@ -7,7 +7,7 @@ const DataTable = (props) => {
   const [hasMore, setHasMore] = createSignal(true);
   const [total, setTotal] = createSignal(0);
   const [sortingNeeded, setSortingNeeded] = createSignal(false);
-  const sort = useSort("Price");
+  const sort = useSort("CrawlTime");
 
   async function fetchCount() {
     const response = await fetch("http://localhost:3000/houses/count");
@@ -286,7 +286,11 @@ const DataTable = (props) => {
                         Link
                       </a>
                     </td>
-                    <td>{item.CrawlTime}</td>
+                    <td>
+                      {item.CrawlTime.split("T")[0] +
+                        " " +
+                        item.CrawlTime.split("T")[1].replace(/\..*$/, "")}
+                    </td>
                   </tr>
                 )}
               </For>
