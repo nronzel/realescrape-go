@@ -5,8 +5,6 @@ in Go using the [Colly](https://github.com/gocolly/colly) web scraping framework
 
 > NOTE This project is for educational purposes only. Please use with care.
 
-
-
 ## Upcoming
 
 TODO:
@@ -129,8 +127,21 @@ listings were scraped, how long it took, etc.
 
 #### Known Issues
 
-Need to set up websockets so when the database updates it can update the
-frontend properly. For now, a manual refresh button will do.
+Issue 1: Getting updated data.
+Currently when requesting a scrape on the frontend you need to manually
+update with the refresh button.
+
+This can be fixed in a number of different ways:
+1. polling requests from the frontend to check if there's been an update
+2. implement some kind of events channel so whenever there is a database update
+the frontend can react to it and re-render what is necessary.
+
+I attempted #1, but ran into an issue with the page constantly re-rendering
+with each request. There may just be something I'm missing here to solve this as
+I know polling requests is a common way to handle this.
+
+I would prefer to implement #2 as I find realtime updates more appealing. I may
+start with polling updates and create a feature branch for event based realtime updates.
 
 ---
 
