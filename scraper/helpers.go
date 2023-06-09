@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"math"
 	"path/filepath"
 	"regexp"
 	"strconv"
@@ -30,46 +31,59 @@ func getCollector() *colly.Collector {
 }
 
 // Splits the provided string where numbers meet letters
-func splitUnits(input string) (string, string, string) {
+func splitUnits(input string) (float64, string, int) {
 	re := regexp.MustCompile(`(\d[\d,]*(?:\.\d+)?)\s*([a-zA-Z]+)`)
 	matches := re.FindStringSubmatch(input)
 
 	if len(matches) >= 3 {
-		number := matches[1]
+		sqft := matches[1]
 		unit := matches[2]
-		var totalSqft string
 		if unit == "acre" {
-			totalSqft, err := convertToSqft(number)
+			totalSqft, err := convertToSqft(sqft)
 			if err != nil {
 				log.Println("Error converting acre to sqft.", err)
 			}
-			return number, unit, totalSqft
+            sqft = strings.ReplaceAll(sqft, ",", "")
+			intNumber, err := strconv.ParseFloat(sqft, 2)
+			if err != nil {
+                fmt.Printf("Error converting sqft to float: %v", err)
+			}
+			return intNumber, unit, totalSqft
 		} else {
-			totalSqft = number
-			return number, unit, totalSqft
+            sqft = strings.ReplaceAll(sqft, ",", "")
+			intNumber, err := strconv.Atoi(sqft)
+			if err != nil {
+                fmt.Printf("Error converting sqft to int: %v", err)
+			}
+			totalSqft := intNumber
+			return float64(intNumber), unit, totalSqft
 		}
 	}
 
-	return "", "", ""
+	return 0, "", 0
 }
 
 /*
 Splits the address into its individual parts
 I opted to keep street # and street name together
 */
-func parseAddress(address string) (string, string, string, string) {
+func parseAddress(address string) (string, string, string, int) {
 	splitAddress := strings.Split(address, ",")
 
 	if len(splitAddress) < 3 {
-		return "", "", "", ""
+		return "", "", "", 0
 	}
 	street := strings.TrimSpace(splitAddress[0])
 	city := strings.TrimSpace(splitAddress[1])
 	stateAndZip := strings.Split(strings.TrimSpace(splitAddress[2]), " ")
 	state := strings.TrimSpace(stateAndZip[0])
 	zip := strings.TrimSpace(stateAndZip[1])
+	intZip, err := strconv.Atoi(zip)
+	if err != nil {
+		fmt.Printf("Error converting zip to int: %v", err)
+	}
 
-	return street, city, state, zip
+	return street, city, state, intZip
 }
 
 func logStats(start time.Time, houses []models.House) {
@@ -84,20 +98,20 @@ func logStats(start time.Time, houses []models.House) {
 	}
 }
 
-func convertToSqft(acre string) (string, error) {
+func convertToSqft(acre string) (int, error) {
 	num, err := strconv.ParseFloat(acre, 32)
 
 	if err != nil {
-		return "0", fmt.Errorf("Error converting total sqft: %v", err)
+		return 0, fmt.Errorf("Error converting total sqft: %v", err)
 	}
 
 	if num < 0 {
-		return "0", fmt.Errorf("value cannot be negative")
+		return 0, fmt.Errorf("value cannot be negative")
 	}
 
 	result := num * 43560.0
 
-	return strconv.Itoa(int(result)), nil
+	return int(result), nil
 }
 
 /*
@@ -116,82 +130,72 @@ There are also issues if the data in the listing itself isn't properly uploaded.
 Some houses do not have sqft listed or sometimes they put the lot size as the
 sqft of the home.
 */
-func htyRatios(houseSqft, lotSqft string) (string, string) {
-	if houseSqft == "" || lotSqft == "" {
-		return "", ""
-	}
-	houseSqftInt, err := strconv.Atoi(houseSqft)
-	if err != nil {
-		log.Println(err)
+func htyRatios(houseSqft, lotSqft int) (float64, float64) {
+	if houseSqft == 0 || lotSqft == 0 {
+		return 0, 0
 	}
 
-	lotSqftInt, err := strconv.Atoi(lotSqft)
-	if err != nil {
-		log.Println(err)
-	}
-
-	houseSqftFloat := float64(houseSqftInt)
-	lotSqftFloat := float64(lotSqftInt)
+	houseSqftFloat := float64(houseSqft)
+	lotSqftFloat := float64(lotSqft)
 
 	hty := lotSqftFloat / houseSqftFloat
 	htyPercent := houseSqftFloat / lotSqftFloat
 
-	return strconv.FormatFloat(hty, 'f', 2, 64),
-		strconv.FormatFloat(htyPercent, 'f', 2, 64)
+    hty = math.Round(hty * 100) / 100
+    htyPercent = math.Round(htyPercent * 100) / 100
+
+	return hty, htyPercent
 }
 
 // Combines all JSON files in the /data dir into a single JSON
 func combineJSON() error {
-    dir := "./data"
+	dir := "./data"
 
-    // holds json data & file count
-    var data []models.House
-    var jsonFiles int
+	// holds json data & file count
+	var data []models.House
+	var jsonFiles int
 
-    files, err := ioutil.ReadDir(dir)
-    if err != nil {
-        return fmt.Errorf("failed to list files in directory %q: %v", dir, err)
-    }
+	files, err := ioutil.ReadDir(dir)
+	if err != nil {
+		return fmt.Errorf("failed to list files in directory %q: %v", dir, err)
+	}
 
-    // Loop through files in the directory
-    for _, file := range files {
-        // If file is ".json"
-        if filepath.Ext(file.Name()) == ".json" {
-            jsonFiles++
-            // Read the contents of the file
-            contents, err := ioutil.ReadFile(filepath.Join(dir, file.Name()))
-            if err != nil {
-                return fmt.Errorf("failed to read file %q: %v", file.Name(), err)
-            }
+	// Loop through files in the directory
+	for _, file := range files {
+		// If file is ".json"
+		if filepath.Ext(file.Name()) == ".json" {
+			jsonFiles++
+			// Read the contents of the file
+			contents, err := ioutil.ReadFile(filepath.Join(dir, file.Name()))
+			if err != nil {
+				return fmt.Errorf("failed to read file %q: %v", file.Name(), err)
+			}
 
-            // Unmarshal the data
-            var jsonData []models.House
-            if err := json.Unmarshal(contents, &jsonData); err != nil {
-                return fmt.Errorf("failed to unmarshal JSON data from file %q: %v", file.Name(), err)
-            }
+			// Unmarshal the data
+			var jsonData []models.House
+			if err := json.Unmarshal(contents, &jsonData); err != nil {
+				return fmt.Errorf("failed to unmarshal JSON data from file %q: %v", file.Name(), err)
+			}
 
+			// Append the data from this file to the master slice
+			data = append(data, jsonData...)
+		}
+	}
 
-            // Append the data from this file to the master slice
-            data = append(data, jsonData...)
-        }
-    }
+	if jsonFiles < 1 {
+		return nil
+	}
 
-    if jsonFiles < 1 {
-        return nil
-    }
+	// Marshal master slice to JSON
+	jsonData, err := json.MarshalIndent(data, "", "  ")
+	if err != nil {
+		return fmt.Errorf("failed to marshal data to JSON: %v", err)
+	}
 
+	// Write JSON to new file
+	if err := ioutil.WriteFile("master.json", jsonData, 0644); err != nil {
+		return fmt.Errorf("failed to write JSON data to file: %v", err)
+	}
 
-    // Marshal master slice to JSON
-    jsonData, err := json.MarshalIndent(data, "", "  ")
-    if err != nil {
-        return fmt.Errorf("failed to marshal data to JSON: %v", err)
-    }
-
-    // Write JSON to new file
-    if err := ioutil.WriteFile("master.json", jsonData, 0644); err != nil {
-        return fmt.Errorf("failed to write JSON data to file: %v", err)
-    }
-
-    return nil
+	return nil
 }
-

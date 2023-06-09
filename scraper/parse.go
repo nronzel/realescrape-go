@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
 
@@ -15,11 +16,33 @@ import (
 
 func parseHouse(e *colly.HTMLElement) models.House {
 	temp := models.House{}
-	temp.Price = strings.Replace(e.ChildText("span[data-label='pc-price']"), "$", "", 1)
-	temp.Beds = strings.TrimSuffix(e.ChildText("li[data-label='pc-meta-beds'] span"), "bed")
-	temp.Baths = strings.TrimSuffix(e.ChildText("li[data-label='pc-meta-baths'] span"), "bath")
-	temp.Baths = strings.ReplaceAll(temp.Baths, "+", "")
-	temp.Sqft = strings.TrimSuffix(e.ChildText("li[data-label='pc-meta-sqft'] span"), "sqft")
+	tPrice := strings.Replace(e.ChildText("span[data-label='pc-price']"), "$", "", 1)
+	tPrice = strings.ReplaceAll(tPrice, ",", "")
+	intPrice, err := strconv.Atoi(tPrice)
+	if err != nil {
+		fmt.Printf("Error converting price to int: %v\n", err)
+	}
+	temp.Price = intPrice
+
+	tBeds := strings.TrimSuffix(e.ChildText("li[data-label='pc-meta-beds'] span"), "bed")
+	intBeds, err := strconv.Atoi(tBeds)
+	temp.Beds = intBeds
+
+	tBaths := strings.TrimSuffix(e.ChildText("li[data-label='pc-meta-baths'] span"), "bath")
+	tBaths = strings.ReplaceAll(tBaths, "+", "")
+	intBaths, err := strconv.ParseFloat(tBaths, 1)
+	if err != nil {
+		fmt.Printf("Error converting baths to float: %v", err)
+	}
+	temp.Baths = intBaths
+
+	tSqft := strings.TrimSuffix(e.ChildText("li[data-label='pc-meta-sqft'] span"), "sqft")
+	tSqft = strings.ReplaceAll(tSqft, ",", "")
+	intSqft, err := strconv.Atoi(tSqft)
+	if err != nil {
+		fmt.Printf("Error converting sqft to int: %v", err)
+	}
+	temp.Sqft = intSqft
 
 	/*
 	 Splits lotsize and lotsize unit, also calculates total
@@ -32,8 +55,7 @@ func parseHouse(e *colly.HTMLElement) models.House {
 	temp.LotSqft = totalSqft
 
 	// Ratios
-	hty, htyPercent := htyRatios(strings.ReplaceAll(temp.Sqft, ",", ""),
-		strings.ReplaceAll(temp.LotSqft, ",", ""))
+	hty, htyPercent := htyRatios(temp.Sqft, temp.LotSqft)
 	temp.Hty = hty
 	temp.HtyPcnt = htyPercent
 
@@ -90,10 +112,20 @@ func writeHousesToCSV(houses []models.House, location string) error {
 	// Write data
 	for _, h := range houses {
 		crawlTimeStr := h.CrawlTime.Format("2006-01-02 15:04:05")
+		priceStr := strconv.Itoa(h.Price)
+		bedStr := strconv.Itoa(h.Beds)
+		bathStr := fmt.Sprintf("%.1f", h.Baths)
+		sqftStr := strconv.Itoa(h.Sqft)
+		sizeStr := fmt.Sprintf("%.2f", h.LotSize)
+		lotSqftStr := strconv.Itoa(h.LotSqft)
+		htyStr := fmt.Sprintf("%.2f", h.Hty)
+		htyPcntStr := fmt.Sprintf("%.2f", h.HtyPcnt)
+		zipStr := strconv.Itoa(h.Zip)
+
 		record := []string{
-			h.Price, h.Beds, h.Baths, h.Sqft, h.LotSize,
-			h.LotUnit, h.LotSqft, h.Hty, h.HtyPcnt, h.Street, h.City,
-			h.State, h.Zip, h.Link, crawlTimeStr,
+			priceStr, bedStr, bathStr, sqftStr, sizeStr,
+			h.LotUnit, lotSqftStr, htyStr, htyPcntStr, h.Street, h.City,
+			h.State, zipStr, h.Link, crawlTimeStr,
 		}
 		if err := writer.Write(record); err != nil {
 			writeErr = err
