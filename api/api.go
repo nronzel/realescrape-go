@@ -15,11 +15,23 @@ func StartAPI(collection *mongo.Collection) {
 	// Enable CORS
 	e.Use(middleware.CORS())
 
-    // Assign handlers to endpoints
+	// Enable recovery
+	e.Use(middleware.Recover())
+
+	// Enable logger
+	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
+		Format: "method=${method}, uri=${uri}, status=${status}\n",
+	}))
+
+	// Assign handlers to endpoints
 	e.GET("/houses", getAllHouses(collection))
-    e.GET("/houses/count", getHousesCount(collection))
+	e.GET("/houses/count", getHousesCount(collection))
 	e.POST("/scrape/:location", triggerScrape(collection))
-    e.POST("/cleardb", cleanHouse(collection))
+
+	// This is extremely destructive! There is no authentication or security
+	// measures in place. Hosting this publicly will allow anyone to
+	// nuke the database.
+	e.POST("/cleardb", cleanHouse(collection))
 
 	// Start server on port localhost:3000
 	err := e.Start(":3000")
