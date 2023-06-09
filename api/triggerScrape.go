@@ -15,12 +15,14 @@ func triggerScrape(collection *mongo.Collection) echo.HandlerFunc {
 		locationParam := c.Param("location")
 		location, err := url.QueryUnescape(locationParam)
 		if err != nil {
+			c.Logger().Error(err)
 			return echo.NewHTTPError(http.StatusBadRequest, "Failed to decode location param.")
 		}
 
 		go func() {
 			err := scraper.RunScraper(collection, location)
 			if err != nil {
+				c.Logger().Error(err)
 				log.Printf("Failed to scrape data: %v", err)
 			}
 		}()
