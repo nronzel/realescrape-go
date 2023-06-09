@@ -18,8 +18,9 @@ TODO:
 - [x] ~API endpoint~
 - [ ] Unit tests for the DB and API
 - [x] ~Make API a little more robust~
-- [ ] Websockets for updates
-- [ ] Front End
+- [ ] Server event driven updates (I would like realtime updates to the frontend)
+- [~] Front End (mostly done, need to do stats
+- [~] Column sorting (there but broken)
 - [ ] Dockerize the app
 - [x] ~Split code into separate packages for easier maintanability~
 
@@ -103,6 +104,7 @@ Run the program with the following command
 ```bash
 go run main.go
 ```
+
 When you run `main.go` it will connect to the MongoDB and start the API
 on `localhost:3000`. You can then go into the `frontend/realescrape/` folder
 and run the command `pnpm run start` or `npm run start` and it will start the
@@ -132,9 +134,10 @@ Currently when requesting a scrape on the frontend you need to manually
 update with the refresh button.
 
 This can be fixed in a number of different ways:
+
 1. polling requests from the frontend to check if there's been an update
 2. implement some kind of events channel so whenever there is a database update
-the frontend can react to it and re-render what is necessary.
+   the frontend can react to it and re-render what is necessary.
 
 I attempted #1, but ran into an issue with the page constantly re-rendering
 with each request. There may just be something I'm missing here to solve this as
