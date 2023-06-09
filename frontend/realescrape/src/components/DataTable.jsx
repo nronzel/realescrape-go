@@ -8,6 +8,7 @@ const DataTable = (props) => {
   const [total, setTotal] = createSignal(0);
   const [sortingNeeded, setSortingNeeded] = createSignal(false);
   const sort = useSort("CrawlTime");
+  const limit = 20;
 
   async function fetchCount() {
     const response = await fetch("http://localhost:3000/houses/count");
@@ -21,7 +22,7 @@ const DataTable = (props) => {
     const response = await fetch(url);
     const json = await response.json();
 
-    if (json.length === 0 || (currentPage - 1) * 20 + json.length >= total()) {
+    if (json.length === 0 || (currentPage - 1) * limit + json.length >= total()) {
       setHasMore(false);
     } else {
       setHasMore(true);
@@ -55,7 +56,7 @@ const DataTable = (props) => {
   onMount(() => {
     fetchCount().then(() => {
       fetchData(page());
-      if (total() > 20) {
+      if (total() > limit) {
         setHasMore(true);
       }
     });
@@ -73,7 +74,7 @@ const DataTable = (props) => {
   createEffect(() => {
     if (!props.searchPerformed()) return;
     if (props.searchPerformed()) {
-      total() > 20 ? setHasMore(true) : "";
+      total() > limit ? setHasMore(true) : "";
       setPage(1);
       fetchCount();
       fetchData(1);
