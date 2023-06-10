@@ -67,13 +67,13 @@ Uses the [Echo](https://echo.labstack.com) framework for the API.
 
 Currently has the following endpoints:
 
-| Method | Endpoint                  | Description                                                                          |
-| ------ | ------------------------- | ------------------------------------------------------------------------------------ |
-| GET    | `/houses`                 | Gets all items in MongoDB collection                                                 |
-| GET    | `/houses?page=1&limit=20` | Takes `page` and `limit` parameters to limit returned results                        |
-| GET    | `/houses/count`           | Returns the count of all items in the MongoDB collection                             |
-| POST   | `/cleardb`                | Deletes all items in MongoDB collection, and all JSON files in the `/data` directory |
-| POST   | `/scrape/:location`       | Takes a location parameter and scrapes data for the location                         |
+| Method | Endpoint                  | Description                                                                                       |
+| ------ | ------------------------- | ------------------------------------------------------------------------------------------------- |
+| GET    | `/houses`                 | Gets all items in MongoDB collection                                                              |
+| GET    | `/houses?page=1&limit=20` | Takes `page` and `limit` parameters to limit results. `page` acts as an offset based on the limit |
+| GET    | `/houses/count`           | Returns the count of all items in the MongoDB collection                                          |
+| POST   | `/cleardb`                | Deletes all items in MongoDB collection, and all JSON files in the `/data` directory              |
+| POST   | `/scrape/:location`       | Takes a location parameter and scrapes data for the location                                      |
 
 ## Installation
 
