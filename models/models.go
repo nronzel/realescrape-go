@@ -15,7 +15,7 @@ type House struct {
 	Street    string    `json:"Street" bson:"street"`
 	City      string    `json:"City" bson:"city"`
 	State     string    `json:"State" bson:"state"`
-	Zip       int       `json:"Zip" bson:"zip"`
+	Zip       string    `json:"Zip" bson:"zip"`
 	Link      string    `json:"Link" bson:"link"`
 	CrawlTime time.Time `json:"CrawlTime" bson:"crawlTime"`
 }
