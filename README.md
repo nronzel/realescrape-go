@@ -28,7 +28,7 @@ TODO:
 - [ ] More robust unit tests
 - [ ] Full state searches
 - [x] ~Flesh out API~
-- [ ] SSE for realtime updates
+- [x] ~SSE for realtime updates~
 - [ ] Dockerize the app
 - [x] ~Split code into separate packages for easier maintanability~
 
@@ -37,6 +37,7 @@ Frontend TODO:
 - [ ] Stats page
 - [ ] Refactor/clean up the code base
 - [ ] Icon on columns headers to indicate sort direction
+- [ ] Loading spinner when scrape is active
 - [x] ~Column sorting~
 
 ## Description
@@ -72,6 +73,7 @@ Currently has the following endpoints:
 | GET    | `/houses`                 | Gets all items in MongoDB collection                                                              |
 | GET    | `/houses?page=1&limit=20` | Takes `page` and `limit` parameters to limit results. `page` acts as an offset based on the limit |
 | GET    | `/houses/count`           | Returns the count of all items in the MongoDB collection                                          |
+| GET    | `/livecount`              | SSE endpoint provides live updates when the count changes                                         |
 | POST   | `/cleardb`                | Deletes all items in MongoDB collection, and all JSON files in the `/data` directory              |
 | POST   | `/scrape/:location`       | Takes a location parameter and scrapes data for the location                                      |
 
@@ -156,20 +158,9 @@ listings were scraped, how long it took, etc.
 
 #### Known Issues
 
-Issue 1: Getting updated data.
-Currently when requesting a scrape on the frontend you need to manually
-update with the refresh button.
-
-This can be fixed in a number of different ways:
-
-1. polling requests from the frontend to check if there's been an update
-2. implement some kind of events channel so whenever there is a database update
-   the frontend can react to it and re-render what is necessary.
-
-I did some research on the issue and will end up going with Server Sent Events.
-SSE will be fairly trivial to implement and will allow realtime updates to my
-frontend. I intend to send updates any time the length of the MongoDB collection
-changes so it can trigger a re-render on the front-end to re-fetch the data.
+No known bugs, just sloppy code currently.
+I should also add some input verification and provide some more feedback on the
+frontend when a scrape is active.
 
 ---
 
