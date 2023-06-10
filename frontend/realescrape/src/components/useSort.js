@@ -9,10 +9,17 @@ export default function useSort(column = "") {
   const sortByColumn = (array) => {
     const sortDetails = sortConfig();
     return array.slice().sort((a, b) => {
-      if (a[sortDetails.column] < b[sortDetails.column]) {
+      let aValue = a[sortDetails.column];
+      let bValue = b[sortDetails.column];
+
+      // Convert to number if possible
+      aValue = isNaN(Number(aValue)) ? aValue : Number(aValue);
+      bValue = isNaN(Number(bValue)) ? bValue : Number(bValue);
+
+      if (aValue < bValue) {
         return sortDetails.direction === "asc" ? -1 : 1;
       }
-      if (a[sortDetails.column] > b[sortDetails.column]) {
+      if (aValue > bValue) {
         return sortDetails.direction === "asc" ? 1 : -1;
       }
       return 0;
