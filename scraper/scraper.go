@@ -53,7 +53,7 @@ func RunScraper(collection *mongo.Collection, location string) error {
 	start := time.Now()
 
 	decodedLocation, err := url.QueryUnescape(location)
-    decodedLocation = strings.ReplaceAll(decodedLocation, " ", "_")
+	decodedLocation = strings.ReplaceAll(decodedLocation, " ", "_")
 
 	if err != nil {
 		return fmt.Errorf("Failed to decode location: %v", err)
@@ -110,7 +110,7 @@ func RunScraper(collection *mongo.Collection, location string) error {
 
 	logStats(start, houses)
 
-    // Writes CSV and JSON file named with location
+	// Writes CSV and JSON file named with location
 	if err := writeBothFiles(houses, location); err != nil {
 		return fmt.Errorf("Error while writing files: %v", err)
 	}
@@ -120,7 +120,10 @@ func RunScraper(collection *mongo.Collection, location string) error {
 		return fmt.Errorf("Error combining JSON files: %v", err)
 	}
 
-	db.InsertMongo(collection)
+	err = db.InsertMongo(collection)
+	if err != nil {
+		return fmt.Errorf("Error inserting into MongoDB: %v", err)
+	}
 
 	return nil
 }
