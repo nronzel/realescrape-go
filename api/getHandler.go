@@ -46,13 +46,14 @@ func getAllHouses(collection *mongo.Collection) echo.HandlerFunc {
 		findOptions.SetLimit(int64(limit))
 		findOptions.SetSkip(int64((page - 1) * limit))
 
-		findOptions.SetSort(bson.D{{"crawlTime", -1}})
+		findOptions.SetSort(bson.D{{Key: "crawlTime", Value: -1}})
 
 		// Attempts to find all documents in MongoDB collection
 		cursor, err := collection.Find(ctx, bson.M{}, findOptions)
 		if err != nil {
 			// Log the error
 			log.Printf("Failed to find houses: %v", err)
+			c.Logger().Error(err)
 			// Return generic error message to client with 500 status
 			return c.JSON(http.StatusInternalServerError, "Failed to find houses")
 		}
@@ -69,6 +70,7 @@ func getAllHouses(collection *mongo.Collection) echo.HandlerFunc {
 			if err != nil {
 				// Log the error
 				log.Printf("Failed to decode house: %v", err)
+				c.Logger().Error(err)
 				// Return a generic error message to client with 500 status
 				return c.JSON(http.StatusInternalServerError, "Failed to decode house")
 			}
@@ -80,12 +82,14 @@ func getAllHouses(collection *mongo.Collection) echo.HandlerFunc {
 		// Check for remaining cursor errors after loop
 		if err := cursor.Err(); err != nil {
 			log.Printf("Cursor error: %v", err)
+			c.Logger().Error(err)
 			return c.JSON(http.StatusInternalServerError, "Failed to retrieve houses")
 		}
 
 		// Send 200 status code with the response
 		err = c.JSON(http.StatusOK, houses)
 		if err != nil {
+			c.Logger().Error(err)
 			log.Printf("Failed to send response: %v", err)
 		}
 
