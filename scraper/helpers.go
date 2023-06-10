@@ -31,59 +31,72 @@ func getCollector() *colly.Collector {
 }
 
 // Splits the provided string where numbers meet letters
+
 func splitUnits(input string) (float64, string, int) {
+	// Return defaults if input is empty
+	if input == "" {
+		return 0, "", 0
+	}
+
 	re := regexp.MustCompile(`(\d[\d,]*(?:\.\d+)?)\s*([a-zA-Z]+)`)
 	matches := re.FindStringSubmatch(input)
 
-	if len(matches) >= 3 {
-		sqft := matches[1]
-		unit := matches[2]
-		if unit == "acre" {
-			totalSqft, err := convertToSqft(sqft)
-			if err != nil {
-				log.Println("Error converting acre to sqft.", err)
-			}
-            sqft = strings.ReplaceAll(sqft, ",", "")
-			intNumber, err := strconv.ParseFloat(sqft, 2)
-			if err != nil {
-                fmt.Printf("Error converting sqft to float: %v", err)
-			}
-			return intNumber, unit, totalSqft
-		} else {
-            sqft = strings.ReplaceAll(sqft, ",", "")
-			intNumber, err := strconv.Atoi(sqft)
-			if err != nil {
-                fmt.Printf("Error converting sqft to int: %v", err)
-			}
-			totalSqft := intNumber
-			return float64(intNumber), unit, totalSqft
+	// If matches is nil or does not contain at least 3 groups, return defaults
+	if matches == nil || len(matches) < 3 {
+		return 0, "", 0
+	}
+
+	sqft := matches[1]
+	unit := matches[2]
+
+	// Replace all commas
+	sqft = strings.ReplaceAll(sqft, ",", "")
+
+	// Convert sqft to totalSqft, with different methods based on unit
+	var totalSqft int
+	var err error
+	if unit == "acre" {
+		totalSqft, err = convertToSqft(sqft)
+		if err != nil {
+			log.Println("Error converting acre to sqft:", err)
+			return 0, "", 0 // return default values on error
+		}
+	} else {
+		totalSqft, err = strconv.Atoi(sqft)
+		if err != nil {
+			log.Println("Error converting sqft to int:", err)
+			return 0, "", 0 // return default values on error
 		}
 	}
 
-	return 0, "", 0
+	// Convert sqft to float64
+	intNumber, err := strconv.ParseFloat(sqft, 64)
+	if err != nil {
+		log.Println("Error converting sqft to float:", err)
+		return 0, "", 0 // return default values on error
+	}
+
+	// Return final values
+	return intNumber, unit, totalSqft
 }
 
 /*
 Splits the address into its individual parts
 I opted to keep street # and street name together
 */
-func parseAddress(address string) (string, string, string, int) {
+func parseAddress(address string) (string, string, string, string) {
 	splitAddress := strings.Split(address, ",")
 
 	if len(splitAddress) < 3 {
-		return "", "", "", 0
+		return "", "", "", ""
 	}
 	street := strings.TrimSpace(splitAddress[0])
 	city := strings.TrimSpace(splitAddress[1])
 	stateAndZip := strings.Split(strings.TrimSpace(splitAddress[2]), " ")
 	state := strings.TrimSpace(stateAndZip[0])
 	zip := strings.TrimSpace(stateAndZip[1])
-	intZip, err := strconv.Atoi(zip)
-	if err != nil {
-		fmt.Printf("Error converting zip to int: %v", err)
-	}
 
-	return street, city, state, intZip
+	return street, city, state, zip
 }
 
 func logStats(start time.Time, houses []models.House) {
@@ -141,8 +154,8 @@ func htyRatios(houseSqft, lotSqft int) (float64, float64) {
 	hty := lotSqftFloat / houseSqftFloat
 	htyPercent := houseSqftFloat / lotSqftFloat
 
-    hty = math.Round(hty * 100) / 100
-    htyPercent = math.Round(htyPercent * 100) / 100
+	hty = math.Round(hty*100) / 100
+	htyPercent = math.Round(htyPercent*100) / 100
 
 	return hty, htyPercent
 }
