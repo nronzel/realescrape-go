@@ -175,6 +175,11 @@ remains.
 
 I will be working out some way of fixing this issue.
 
+
+Another bug exists when you click the Load More button, it will show duplicate results.
+This is a bug caused by how the data is being displayed and I should have it worked
+out soon.
+
 ---
 
 If you run into any problems you can open an issue, or submit a pull request.
