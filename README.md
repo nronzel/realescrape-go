@@ -37,7 +37,7 @@ Frontend TODO:
 - [ ] Stats page
 - [ ] Refactor/clean up the code base
 - [ ] Icon on columns headers to indicate sort direction
-- [ ] ~Column sorting~
+- [x] ~Column sorting~
 
 ## Description
 
