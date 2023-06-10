@@ -33,4 +33,5 @@ a:focus {
 
 .hover:hover {
   background-color: #090e19 !important;
+  color: #fff;
 }
