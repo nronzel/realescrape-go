@@ -5,6 +5,7 @@ const SearchBar = (props) => {
 
   const searchLocation = async () => {
     try {
+      props.setLoadingState(true);
       const encodedLocation = encodeURIComponent(location());
       const url = `http://localhost:3000/scrape/${encodedLocation}`;
       const response = await fetch(url, { method: "POST" });
@@ -15,10 +16,9 @@ const SearchBar = (props) => {
 
       const data = await response.json();
       console.log(data);
-
-      props.onSearch(true);
     } catch (error) {
       console.error("Error:", error);
+      props.setLoadingState(false);
     }
   };
 
