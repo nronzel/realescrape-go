@@ -75,21 +75,11 @@ const DataTable = (props) => {
   });
 
   createEffect(() => {
-    if (!props.searchPerformed()) return;
-    if (props.searchPerformed()) {
-      total() > limit ? setHasMore(true) : "";
-      setPage(1);
-      fetchCount();
-      fetchData(1);
-      props.onSearch(false);
-    }
-  });
-
-  createEffect(() => {
     if (updated()) {
       setPage(1);
       fetchData(1);
       setUpdated(false);
+      props.setLoadingState(false);
     }
   });
 
@@ -133,200 +123,209 @@ const DataTable = (props) => {
       }
       {props.data().length > 0 ? (
         <>
-          <div className="overflow-x-auto w-11/12">
-            <table
-              className="
+          {props.loadingState() ? (
+            // Actually works, put spinner here
+            <div className="w-full flex justify-center">
+              <p>
+                Loading<span className="loading loading-dots loading-md"></span>
+              </p>
+            </div>
+          ) : (
+            <div className="overflow-x-auto w-11/12">
+              <table
+                className="
               table
               table-xs
               cursor-default
               "
-            >
-              <thead>
-                <tr>
-                  <th></th>
-                  <SortableHeader
-                    column="Price"
-                    handleSort={(column) => {
-                      sort.handleSort(column);
-                      setSortingNeeded(true);
-                    }}
-                  >
-                    Price
-                  </SortableHeader>
-                  <SortableHeader
-                    column="Beds"
-                    handleSort={(column) => {
-                      sort.handleSort(column);
-                      setSortingNeeded(true);
-                    }}
-                  >
-                    Beds
-                  </SortableHeader>
-                  <SortableHeader
-                    column="Baths"
-                    handleSort={(column) => {
-                      sort.handleSort(column);
-                      setSortingNeeded(true);
-                    }}
-                  >
-                    Baths
-                  </SortableHeader>
-                  <SortableHeader
-                    column="Sqft"
-                    handleSort={(column) => {
-                      sort.handleSort(column);
-                      setSortingNeeded(true);
-                    }}
-                  >
-                    Sqft
-                  </SortableHeader>
-                  <SortableHeader
-                    column="LotSize"
-                    handleSort={(column) => {
-                      sort.handleSort(column);
-                      setSortingNeeded(true);
-                    }}
-                  >
-                    LotSize
-                  </SortableHeader>
-                  <SortableHeader
-                    column="LotUnit"
-                    handleSort={(column) => {
-                      sort.handleSort(column);
-                      setSortingNeeded(true);
-                    }}
-                  >
-                    LotUnit
-                  </SortableHeader>
-                  <SortableHeader
-                    column="LotSqft"
-                    handleSort={(column) => {
-                      sort.handleSort(column);
-                      setSortingNeeded(true);
-                    }}
-                  >
-                    LotSqft
-                  </SortableHeader>
-                  <SortableHeader
-                    column="Hty"
-                    handleSort={(column) => {
-                      sort.handleSort(column);
-                      setSortingNeeded(true);
-                    }}
-                  >
-                    Hty
-                  </SortableHeader>
-                  <SortableHeader
-                    column="HtyPcnt"
-                    handleSort={(column) => {
-                      sort.handleSort(column);
-                      setSortingNeeded(true);
-                    }}
-                  >
-                    HtyPcnt
-                  </SortableHeader>
-                  <SortableHeader
-                    column="Street"
-                    handleSort={(column) => {
-                      sort.handleSort(column);
-                      setSortingNeeded(true);
-                    }}
-                  >
-                    Street
-                  </SortableHeader>
-                  <SortableHeader
-                    column="City"
-                    handleSort={(column) => {
-                      sort.handleSort(column);
-                      setSortingNeeded(true);
-                    }}
-                  >
-                    City
-                  </SortableHeader>
-                  <SortableHeader
-                    column="State"
-                    handleSort={(column) => {
-                      sort.handleSort(column);
-                      setSortingNeeded(true);
-                    }}
-                  >
-                    State
-                  </SortableHeader>
-                  <SortableHeader
-                    column="Zip"
-                    handleSort={(column) => {
-                      sort.handleSort(column);
-                      setSortingNeeded(true);
-                    }}
-                  >
-                    Zip
-                  </SortableHeader>
-                  <SortableHeader column="Link" handleSort={sort.handleSort}>
-                    Link
-                  </SortableHeader>
-                  <SortableHeader
-                    column="CrawlTime"
-                    handleSort={(column) => {
-                      sort.handleSort(column);
-                      setSortingNeeded(true);
-                    }}
-                  >
-                    CrawlTime
-                  </SortableHeader>
-                </tr>
-              </thead>
-              <For each={props.data()}>
-                {(item, index) => (
-                  <tr className="hover">
-                    <td>{index() + 1}</td>
-                    <td>{item.Price.toLocaleString()}</td>
-                    <td>{item.Beds}</td>
-                    <td>{item.Baths}</td>
-                    <td>{item.Sqft.toLocaleString()}</td>
-                    <td>{item.LotSize.toLocaleString()}</td>
-                    <td>{item.LotUnit}</td>
-                    <td>{item.LotSqft}</td>
-                    <td>{item.Hty}</td>
-                    <td>{item.HtyPcnt}</td>
-                    <td>{item.Street}</td>
-                    <td>{item.City}</td>
-                    <td>{item.State}</td>
-                    <td>{item.Zip}</td>
-                    <td>
-                      <a href={item.Link} target="_blank">
-                        Link
-                      </a>
-                    </td>
-                    <td>
-                      {item.CrawlTime.split("T")[0] +
-                        " " +
-                        item.CrawlTime.split("T")[1].replace(/\..*$/, "")}
-                    </td>
+              >
+                <thead>
+                  <tr>
+                    <th></th>
+                    <SortableHeader
+                      column="Price"
+                      handleSort={(column) => {
+                        sort.handleSort(column);
+                        setSortingNeeded(true);
+                      }}
+                    >
+                      Price
+                    </SortableHeader>
+                    <SortableHeader
+                      column="Beds"
+                      handleSort={(column) => {
+                        sort.handleSort(column);
+                        setSortingNeeded(true);
+                      }}
+                    >
+                      Beds
+                    </SortableHeader>
+                    <SortableHeader
+                      column="Baths"
+                      handleSort={(column) => {
+                        sort.handleSort(column);
+                        setSortingNeeded(true);
+                      }}
+                    >
+                      Baths
+                    </SortableHeader>
+                    <SortableHeader
+                      column="Sqft"
+                      handleSort={(column) => {
+                        sort.handleSort(column);
+                        setSortingNeeded(true);
+                      }}
+                    >
+                      Sqft
+                    </SortableHeader>
+                    <SortableHeader
+                      column="LotSize"
+                      handleSort={(column) => {
+                        sort.handleSort(column);
+                        setSortingNeeded(true);
+                      }}
+                    >
+                      LotSize
+                    </SortableHeader>
+                    <SortableHeader
+                      column="LotUnit"
+                      handleSort={(column) => {
+                        sort.handleSort(column);
+                        setSortingNeeded(true);
+                      }}
+                    >
+                      LotUnit
+                    </SortableHeader>
+                    <SortableHeader
+                      column="LotSqft"
+                      handleSort={(column) => {
+                        sort.handleSort(column);
+                        setSortingNeeded(true);
+                      }}
+                    >
+                      LotSqft
+                    </SortableHeader>
+                    <SortableHeader
+                      column="Hty"
+                      handleSort={(column) => {
+                        sort.handleSort(column);
+                        setSortingNeeded(true);
+                      }}
+                    >
+                      Hty
+                    </SortableHeader>
+                    <SortableHeader
+                      column="HtyPcnt"
+                      handleSort={(column) => {
+                        sort.handleSort(column);
+                        setSortingNeeded(true);
+                      }}
+                    >
+                      HtyPcnt
+                    </SortableHeader>
+                    <SortableHeader
+                      column="Street"
+                      handleSort={(column) => {
+                        sort.handleSort(column);
+                        setSortingNeeded(true);
+                      }}
+                    >
+                      Street
+                    </SortableHeader>
+                    <SortableHeader
+                      column="City"
+                      handleSort={(column) => {
+                        sort.handleSort(column);
+                        setSortingNeeded(true);
+                      }}
+                    >
+                      City
+                    </SortableHeader>
+                    <SortableHeader
+                      column="State"
+                      handleSort={(column) => {
+                        sort.handleSort(column);
+                        setSortingNeeded(true);
+                      }}
+                    >
+                      State
+                    </SortableHeader>
+                    <SortableHeader
+                      column="Zip"
+                      handleSort={(column) => {
+                        sort.handleSort(column);
+                        setSortingNeeded(true);
+                      }}
+                    >
+                      Zip
+                    </SortableHeader>
+                    <SortableHeader column="Link" handleSort={sort.handleSort}>
+                      Link
+                    </SortableHeader>
+                    <SortableHeader
+                      column="CrawlTime"
+                      handleSort={(column) => {
+                        sort.handleSort(column);
+                        setSortingNeeded(true);
+                      }}
+                    >
+                      CrawlTime
+                    </SortableHeader>
                   </tr>
-                )}
-              </For>
-              <tfoot>
-                <tr>
-                  <th></th>
-                  <th>Price</th>
-                  <th>Beds</th>
-                  <th>Baths</th>
-                  <th>Sqft</th>
-                  <th>LotSize</th>
-                  <th>LotUnit</th>
-                  <th>LotSqft</th>
-                  <th>Hty</th>
-                  <th>HtyPcnt</th>
-                  <th>Street</th>
-                  <th>City</th>
-                  <th>State</th>
-                  <th>Zip</th>
-                  <th>Link</th>
-                  <th>CrawlTime</th>
-                </tr>
-              </tfoot>
-            </table>
-          </div>
+                </thead>
+                <For each={props.data()}>
+                  {(item, index) => (
+                    <tr className="hover">
+                      <td>{index() + 1}</td>
+                      <td>{item.Price.toLocaleString()}</td>
+                      <td>{item.Beds}</td>
+                      <td>{item.Baths}</td>
+                      <td>{item.Sqft.toLocaleString()}</td>
+                      <td>{item.LotSize.toLocaleString()}</td>
+                      <td>{item.LotUnit}</td>
+                      <td>{item.LotSqft}</td>
+                      <td>{item.Hty}</td>
+                      <td>{item.HtyPcnt}</td>
+                      <td>{item.Street}</td>
+                      <td>{item.City}</td>
+                      <td>{item.State}</td>
+                      <td>{item.Zip}</td>
+                      <td>
+                        <a href={item.Link} target="_blank">
+                          Link
+                        </a>
+                      </td>
+                      <td>
+                        {item.CrawlTime.split("T")[0] +
+                          " " +
+                          item.CrawlTime.split("T")[1].replace(/\..*$/, "")}
+                      </td>
+                    </tr>
+                  )}
+                </For>
+                <tfoot>
+                  <tr>
+                    <th></th>
+                    <th>Price</th>
+                    <th>Beds</th>
+                    <th>Baths</th>
+                    <th>Sqft</th>
+                    <th>LotSize</th>
+                    <th>LotUnit</th>
+                    <th>LotSqft</th>
+                    <th>Hty</th>
+                    <th>HtyPcnt</th>
+                    <th>Street</th>
+                    <th>City</th>
+                    <th>State</th>
+                    <th>Zip</th>
+                    <th>Link</th>
+                    <th>CrawlTime</th>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          )}
           <div className="flex gap-4 mt-5 mb-5 justify-center w-full">
             <button
               className="btn btn-sm btn-secondary"

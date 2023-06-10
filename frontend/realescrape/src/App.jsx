@@ -5,25 +5,21 @@ import { createSignal } from "solid-js";
 import ViewSwitcher from "./components/ViewSwitcher.jsx";
 
 function App() {
-  const [searchPerformed, setSearchPerformed] = createSignal(false);
   const [viewState, setViewState] = createSignal("table");
   const [data, setData] = createSignal([]);
+  const [loadingState, setLoadingState] = createSignal(false);
 
   return (
     <div className="main">
       <Header />
-      <SearchBar setData={setData} onSearch={setSearchPerformed} />
-      <ViewSwitcher
-        viewState={viewState}
-        setViewState={setViewState}
-        setSearchPerformed={setSearchPerformed}
-      />
+      <SearchBar setLoadingState={setLoadingState} />
+      <ViewSwitcher viewState={viewState} setViewState={setViewState} />
       {viewState() === "table" ? (
         <DataTable
           data={data}
           setData={setData}
-          onSearch={setSearchPerformed}
-          searchPerformed={searchPerformed}
+          setLoadingState={setLoadingState}
+          loadingState={loadingState}
         />
       ) : (
         <p>Stats page</p>
