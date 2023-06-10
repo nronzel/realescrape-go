@@ -12,37 +12,25 @@ import (
 
 	"github.com/gocolly/colly"
 	"github.com/nronzel/realescrape-go/models"
+	"github.com/nronzel/realescrape-go/utils"
 )
 
 func parseHouse(e *colly.HTMLElement) models.House {
 	temp := models.House{}
 	tPrice := strings.Replace(e.ChildText("span[data-label='pc-price']"), "$", "", 1)
 	tPrice = strings.ReplaceAll(tPrice, ",", "")
-	intPrice, err := strconv.Atoi(tPrice)
-	if err != nil {
-		fmt.Printf("Error converting price to int: %v\n", err)
-	}
-	temp.Price = intPrice
+	temp.Price = utils.SafeAtoi(tPrice)
 
 	tBeds := strings.TrimSuffix(e.ChildText("li[data-label='pc-meta-beds'] span"), "bed")
-	intBeds, err := strconv.Atoi(tBeds)
-	temp.Beds = intBeds
+	temp.Beds = utils.SafeAtoi(tBeds)
 
 	tBaths := strings.TrimSuffix(e.ChildText("li[data-label='pc-meta-baths'] span"), "bath")
 	tBaths = strings.ReplaceAll(tBaths, "+", "")
-	intBaths, err := strconv.ParseFloat(tBaths, 1)
-	if err != nil {
-		fmt.Printf("Error converting baths to float: %v", err)
-	}
-	temp.Baths = intBaths
+	temp.Baths = utils.SafeParseFloat(tBaths, 1)
 
 	tSqft := strings.TrimSuffix(e.ChildText("li[data-label='pc-meta-sqft'] span"), "sqft")
 	tSqft = strings.ReplaceAll(tSqft, ",", "")
-	intSqft, err := strconv.Atoi(tSqft)
-	if err != nil {
-		fmt.Printf("Error converting sqft to int: %v", err)
-	}
-	temp.Sqft = intSqft
+	temp.Sqft = utils.SafeAtoi(tSqft)
 
 	/*
 	 Splits lotsize and lotsize unit, also calculates total
@@ -120,12 +108,11 @@ func writeHousesToCSV(houses []models.House, location string) error {
 		lotSqftStr := strconv.Itoa(h.LotSqft)
 		htyStr := fmt.Sprintf("%.2f", h.Hty)
 		htyPcntStr := fmt.Sprintf("%.2f", h.HtyPcnt)
-		zipStr := strconv.Itoa(h.Zip)
 
 		record := []string{
 			priceStr, bedStr, bathStr, sqftStr, sizeStr,
 			h.LotUnit, lotSqftStr, htyStr, htyPcntStr, h.Street, h.City,
-			h.State, zipStr, h.Link, crawlTimeStr,
+			h.State, h.Zip, h.Link, crawlTimeStr,
 		}
 		if err := writer.Write(record); err != nil {
 			writeErr = err
