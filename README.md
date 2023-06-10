@@ -122,7 +122,7 @@ on `localhost:3000`.
 
 #### 5. Starting the frontend
 
-![screenshot](./realescrape.png)
+![screenshot](./realescrape-ss.png)
 
 In another terminal window, navigate into the `/frontend/realescrape` directory
 in the project and then run the command to run the dev
