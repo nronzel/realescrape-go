@@ -8,6 +8,7 @@ const DataTable = (props) => {
   const [hasMore, setHasMore] = createSignal(true);
   const [total, setTotal] = createSignal(0);
   const [sortingNeeded, setSortingNeeded] = createSignal(false);
+  const [updated, setUpdated] = createSignal(false);
   const sort = useSort("Price");
   const limit = 20;
 
@@ -52,6 +53,16 @@ const DataTable = (props) => {
         setHasMore(true);
       }
     });
+    const source = new EventSource("http://localhost:3000/livecount");
+    source.onmessage = function (e) {
+      setUpdated(true);
+      setTotal(e.data);
+      console.log(e.data);
+    };
+
+    source.onerror = function (err) {
+      console.error("Error occurred:", err);
+    };
   });
 
   createEffect(() => {
@@ -71,6 +82,14 @@ const DataTable = (props) => {
       fetchCount();
       fetchData(1);
       props.onSearch(false);
+    }
+  });
+
+  createEffect(() => {
+    if (updated()) {
+      setPage(1);
+      fetchData(1);
+      setUpdated(false);
     }
   });
 

@@ -1,10 +1,9 @@
 package api
 
 import (
-	"log"
-
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"github.com/labstack/gommon/log"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -23,9 +22,17 @@ func StartAPI(collection *mongo.Collection) {
 		Format: "method=${method}, uri=${uri}, status=${status}\n",
 	}))
 
+	e.Logger.SetLevel(log.INFO)
+
 	// Assign handlers to endpoints
 	e.GET("/houses", getAllHouses(collection))
 	e.GET("/houses/count", getHousesCount(collection))
+
+	// SSE endpoint
+	e.GET("/livecount", func(c echo.Context) error {
+		return sseHandler(c, collection, e)
+	})
+
 	e.POST("/scrape/:location", triggerScrape(collection))
 
 	// This is extremely destructive! There is no authentication or security
@@ -34,8 +41,5 @@ func StartAPI(collection *mongo.Collection) {
 	e.POST("/cleardb", cleanHouse(collection))
 
 	// Start server on port localhost:3000
-	err := e.Start(":3000")
-	if err != nil {
-		log.Fatalf("Failed to start the server: %v", err)
-	}
+	e.Logger.Fatal(e.Start(":3000"))
 }
