@@ -1,9 +1,18 @@
-# realescrape-go ![go](https://img.shields.io/github/languages/top/nronzel/realescrape-go?style=flat-square) ![go-version](https://img.shields.io/badge/Go-v1.20-blue)
+# realescrape-go
+
+![go-version](https://img.shields.io/badge/Go-v1.20-blue) ![solid](https://img.shields.io/badge/SolidJS-v1.6.10-%233661a1)
 
 Rewrite of my [Python based scraper](https://github.com/nronzel/realescrape)
 in Go using the [Colly](https://github.com/gocolly/colly) web scraping framework.
 
 > NOTE This project is for educational purposes only. Please use with care.
+
+The frontend is not complete, but is in a useable state. Once everything is spun
+up you can use the frontend to start a new scrape, clear out the DB, and you
+can currently sort each column in the table. Updates are not automatic, so if
+you perform an action (new scrape, or delete data) you must manually refresh
+with the refresh button on the page. This will be fixed when I implement SSE
+and will have the table update in real time.
 
 ## Upcoming
 
@@ -16,13 +25,19 @@ TODO:
 - [x] ~combine json files into a master file with all data~
 - [x] ~MongoDB~
 - [x] ~API endpoint~
-- [ ] Unit tests for the DB and API
-- [x] ~Make API a little more robust~
-- [ ] Server event driven updates (I would like realtime updates to the frontend)
-- [~] Front End (mostly done, need to do stats
-- [~] Column sorting (there but broken)
+- [ ] More robust unit tests
+- [ ] Full state searches
+- [x] ~Flesh out API~
+- [ ] SSE for realtime updates
 - [ ] Dockerize the app
 - [x] ~Split code into separate packages for easier maintanability~
+
+Frontend TODO:
+
+- [ ] Stats page
+- [ ] Refactor/clean up the code base
+- [ ] Icon on columns headers to indicate sort direction
+- [ ] ~Column sorting~
 
 ## Description
 
@@ -50,13 +65,15 @@ Currently has the following fixed search parameters:
 
 Uses the [Echo](https://echo.labstack.com) framework for the API.
 
-Currently has a GET endpoint that retrieves all items in the MongoDB
-collection.
+Currently has the following endpoints:
 
-I will be implementing more endpoints in the coming weeks and may also put
-some basic authentication in just as a basic layer of security and as a way
-to learn how to even do so as this is my first API. Currently the auth is not
-a priority.
+| Method | Endpoint                  | Description                                                                          |
+| ------ | ------------------------- | ------------------------------------------------------------------------------------ |
+| GET    | `/houses`                 | Gets all items in MongoDB collection                                                 |
+| GET    | `/houses?page=1&limit=20` | Takes `page` and `limit` parameters to limit returned results                        |
+| GET    | `/houses/count`           | Returns the count of all items in the MongoDB collection                             |
+| POST   | `/cleardb`                | Deletes all items in MongoDB collection, and all JSON files in the `/data` directory |
+| POST   | `/scrape/:location`       | Takes a location parameter and scrapes data for the location                         |
 
 ## Installation
 
@@ -106,10 +123,25 @@ go run main.go
 ```
 
 When you run `main.go` it will connect to the MongoDB and start the API
-on `localhost:3000`. You can then go into the `frontend/realescrape/` folder
-and run the command `pnpm run start` or `npm run start` and it will start the
-frontend on `localhost:3100`. Visit `localhost:3100` in your browser to
-interact with the database.
+on `localhost:3000`.
+
+#### 5. Starting the frontend
+
+In another terminal window, navigate into the `/frontend/realescrape` directory
+in the project and then run the command to run the dev
+server for the frontend.
+
+```bash
+npm run start
+```
+
+Or if you use pnpm
+
+```bash
+pnpm run start
+```
+
+You can then go to `localhost:3100` in your browser to interact with the frontend.
 
 **Locations must be entered in the following formats:**
 
@@ -139,12 +171,10 @@ This can be fixed in a number of different ways:
 2. implement some kind of events channel so whenever there is a database update
    the frontend can react to it and re-render what is necessary.
 
-I attempted #1, but ran into an issue with the page constantly re-rendering
-with each request. There may just be something I'm missing here to solve this as
-I know polling requests is a common way to handle this.
-
-I would prefer to implement #2 as I find realtime updates more appealing. I may
-start with polling updates and create a feature branch for event based realtime updates.
+I did some research on the issue and will end up going with Server Sent Events.
+SSE will be fairly trivial to implement and will allow realtime updates to my
+frontend. I intend to send updates any time the length of the MongoDB collection
+changes so it can trigger a re-render on the front-end to re-fetch the data.
 
 ---
 
