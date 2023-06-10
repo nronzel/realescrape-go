@@ -107,13 +107,6 @@ In the root directory of the project, run
 go get .
 ```
 
-You should also be able to just run the following command and it should install
-the dependencies automatically.
-
-```bash
-go run main.go
-```
-
 #### 4. Run the program
 
 Run the program with the following command
