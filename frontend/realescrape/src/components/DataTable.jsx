@@ -1,37 +1,37 @@
 import { createEffect, onMount, createSignal, For } from "solid-js";
 import useSort from "./useSort";
 import SortableHeader from "./SortableHeader";
+import { getCount, getData, deleteData } from "./fetches.js";
 
 const DataTable = (props) => {
   const [page, setPage] = createSignal(1);
   const [hasMore, setHasMore] = createSignal(true);
   const [total, setTotal] = createSignal(0);
   const [sortingNeeded, setSortingNeeded] = createSignal(false);
-  const sort = useSort("CrawlTime");
+  const sort = useSort("Price");
   const limit = 20;
 
   async function fetchCount() {
-    const response = await fetch("http://localhost:3000/houses/count");
-    const json = await response.json();
-
-    setTotal(json.count);
+    let count = await getCount();
+    setTotal(count);
   }
 
   async function fetchData(currentPage, append = false) {
-    const url = `http://localhost:3000/houses?page=${currentPage}&limit=20`;
-    const response = await fetch(url);
-    const json = await response.json();
+    const data = await getData(currentPage);
 
-    if (json.length === 0 || (currentPage - 1) * limit + json.length >= total()) {
+    if (
+      data.length === 0 ||
+      (currentPage - 1) * limit + data.length >= total()
+    ) {
       setHasMore(false);
     } else {
       setHasMore(true);
     }
 
     if (append) {
-      props.setData((oldData) => [...oldData, ...json]);
+      props.setData((oldData) => [...oldData, ...data]);
     } else {
-      props.setData(json);
+      props.setData(data);
     }
     setSortingNeeded(true);
   }
@@ -43,14 +43,6 @@ const DataTable = (props) => {
 
     props.setData(json);
     setHasMore(false);
-  }
-
-  async function deleteData() {
-    const url = "http://localhost:3000/cleardb";
-    const response = await fetch(url, { method: "POST" });
-    const json = await response.json();
-
-    console.log(json);
   }
 
   onMount(() => {
@@ -84,8 +76,7 @@ const DataTable = (props) => {
 
   createEffect(() => {
     const currentPage = page();
-    if (currentPage > 1 && props.data().length < total())
-      fetchData(currentPage, true);
+    if (currentPage > 1) fetchData(currentPage, true);
   });
 
   return (
@@ -269,11 +260,11 @@ const DataTable = (props) => {
                 {(item, index) => (
                   <tr className="hover">
                     <td>{index() + 1}</td>
-                    <td>{item.Price}</td>
+                    <td>{item.Price.toLocaleString()}</td>
                     <td>{item.Beds}</td>
                     <td>{item.Baths}</td>
-                    <td>{item.Sqft}</td>
-                    <td>{item.LotSize}</td>
+                    <td>{item.Sqft.toLocaleString()}</td>
+                    <td>{item.LotSize.toLocaleString()}</td>
                     <td>{item.LotUnit}</td>
                     <td>{item.LotSqft}</td>
                     <td>{item.Hty}</td>
