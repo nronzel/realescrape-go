@@ -14,6 +14,8 @@ func main() {
 		fmt.Println("Error: ", err)
 	}
 
+	eventBus := api.NewEventBus()
+
 	// Start the Echo API on localhost:3000
-	api.StartAPI(collection)
+	api.StartAPI(collection, eventBus)
 }

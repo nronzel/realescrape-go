@@ -7,7 +7,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func StartAPI(collection *mongo.Collection) {
+func StartAPI(collection *mongo.Collection, eventBus *EventBus) {
 	// Create new Echo app
 	e := echo.New()
 
@@ -23,8 +23,6 @@ func StartAPI(collection *mongo.Collection) {
 	}))
 
 	e.Logger.SetLevel(log.INFO)
-
-    eventBus := NewEventBus()
 
 	e.GET("/houses", getAllHouses(collection))
 	e.GET("/houses/count", getHousesCount(collection))
