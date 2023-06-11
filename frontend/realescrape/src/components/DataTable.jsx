@@ -20,6 +20,9 @@ const DataTable = (props) => {
         await fetchData(1);
         const total = await getCount();
         setTotal(total);
+        if (total > limit) {
+          setHasMore(true);
+        }
       }
     };
     eventSource.onerror = () => {
@@ -49,11 +52,11 @@ const DataTable = (props) => {
     props.setLoadingState(false);
   }
 
-  async function fetchAllData() {
+  const fetchAllData = async () => {
     const data = await getAllData();
     props.setData(data);
     setHasMore(false);
-  }
+  };
 
   onMount(async () => {
     let count = await getCount();
