@@ -34,12 +34,12 @@ func StartAPI(collection *mongo.Collection) {
 		return sseHandler(c, e, eventBus)
 	})
 
-	e.POST("/scrape/:location", triggerScrape(collection))
+	e.POST("/scrape/:location", triggerScrape(collection, eventBus))
 
 	// This is extremely destructive! There is no authentication or security
 	// measures in place. Hosting this publicly will allow anyone to
 	// nuke the database.
-	e.POST("/cleardb", cleanHouse(collection))
+	e.POST("/cleardb", cleanHouse(collection, eventBus))
 
 	// Start server on port localhost:3000
 	e.Logger.Fatal(e.Start(":3000"))
