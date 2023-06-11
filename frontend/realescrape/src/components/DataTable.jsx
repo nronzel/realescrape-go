@@ -1,21 +1,32 @@
-import { createEffect, onMount, createSignal, For } from "solid-js";
+import { createEffect, onMount, createSignal, For, onCleanup } from "solid-js";
 import useSort from "./useSort";
 import SortableHeader from "./SortableHeader";
-import { getCount, getData, deleteData } from "./fetches.js";
+import { getCount, getData, deleteData, getAllData } from "./fetches.js";
 
 const DataTable = (props) => {
   const [page, setPage] = createSignal(1);
   const [hasMore, setHasMore] = createSignal(true);
   const [total, setTotal] = createSignal(0);
   const [sortingNeeded, setSortingNeeded] = createSignal(false);
-  const [updated, setUpdated] = createSignal(false);
+  const [sse, setSse] = createSignal(null);
   const sort = useSort("Price");
   const limit = 20;
 
-  async function fetchCount() {
-    let count = await getCount();
-    setTotal(count);
-  }
+  const startSseConn = async () => {
+    const eventSource = new EventSource("http://localhost:3000/live");
+
+    eventSource.onmessage = async (event) => {
+      if (event.data === "db_updated") {
+        await fetchData(1);
+        const total = await getCount();
+        setTotal(total);
+      }
+    };
+    eventSource.onerror = () => {
+      console.error("Error receiving message, check connection.");
+    };
+    setSse(eventSource);
+  };
 
   async function fetchData(currentPage, append = false) {
     const data = await getData(currentPage);
@@ -35,34 +46,30 @@ const DataTable = (props) => {
       props.setData(data);
     }
     setSortingNeeded(true);
+    props.setLoadingState(false);
   }
 
   async function fetchAllData() {
-    const url = "http://localhost:3000/houses";
-    const response = await fetch(url);
-    const json = await response.json();
-
-    props.setData(json);
+    const data = await getAllData();
+    props.setData(data);
     setHasMore(false);
   }
 
-  onMount(() => {
-    fetchCount().then(() => {
-      fetchData(page());
-      if (total() > limit) {
-        setHasMore(true);
-      }
-    });
-    const source = new EventSource("http://localhost:3000/live");
-    source.onmessage = function (e) {
-      setUpdated(true);
-      setTotal(e.data);
-      console.log(e.data);
-    };
+  onMount(async () => {
+    let count = await getCount();
+    setTotal(count);
+    await fetchData(1);
+    if (total() > limit) {
+      setHasMore(true);
+    }
+    startSseConn();
+  });
 
-    source.onerror = function (err) {
-      console.error("Error occurred:", err);
-    };
+  onCleanup(() => {
+    if (sse()) {
+      sse().close();
+      setSse(null);
+    }
   });
 
   createEffect(() => {
@@ -71,15 +78,6 @@ const DataTable = (props) => {
       const sortedData = sort.sortByColumn(props.data());
       props.setData(sortedData);
       setSortingNeeded(false);
-    }
-  });
-
-  createEffect(() => {
-    if (updated()) {
-      setPage(1);
-      fetchData(1);
-      setUpdated(false);
-      props.setLoadingState(false);
     }
   });
 
@@ -124,7 +122,6 @@ const DataTable = (props) => {
       {props.data().length > 0 ? (
         <>
           {props.loadingState() ? (
-            // Actually works, put spinner here
             <div className="w-full flex justify-center">
               <p>
                 Loading<span className="loading loading-dots loading-md"></span>
