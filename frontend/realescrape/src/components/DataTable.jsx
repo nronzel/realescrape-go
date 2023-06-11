@@ -53,7 +53,7 @@ const DataTable = (props) => {
         setHasMore(true);
       }
     });
-    const source = new EventSource("http://localhost:3000/livecount");
+    const source = new EventSource("http://localhost:3000/live");
     source.onmessage = function (e) {
       setUpdated(true);
       setTotal(e.data);
