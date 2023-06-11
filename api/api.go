@@ -24,13 +24,14 @@ func StartAPI(collection *mongo.Collection) {
 
 	e.Logger.SetLevel(log.INFO)
 
-	// Assign handlers to endpoints
+    eventBus := NewEventBus()
+
 	e.GET("/houses", getAllHouses(collection))
 	e.GET("/houses/count", getHousesCount(collection))
 
 	// SSE endpoint
-	e.GET("/livecount", func(c echo.Context) error {
-		return sseHandler(c, collection, e)
+	e.GET("/live", func(c echo.Context) error {
+		return sseHandler(c, e, eventBus)
 	})
 
 	e.POST("/scrape/:location", triggerScrape(collection))
