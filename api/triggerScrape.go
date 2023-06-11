@@ -10,7 +10,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func triggerScrape(collection *mongo.Collection) echo.HandlerFunc {
+func triggerScrape(collection *mongo.Collection, eb *EventBus) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		locationParam := c.Param("location")
 		location, err := url.QueryUnescape(locationParam)
@@ -25,6 +25,7 @@ func triggerScrape(collection *mongo.Collection) echo.HandlerFunc {
 				c.Logger().Error(err)
 				log.Printf("Failed to scrape data: %v", err)
 			}
+            eb.Publish("db_updated")
 		}()
 
 		return c.JSON(http.StatusOK, map[string]string{

@@ -27,12 +27,13 @@ func doCleanHouse(ctx context.Context, collection *mongo.Collection) error {
 		return err
 	}
 
-	// Remove all JSON files in /data
+    // Read the directory
 	files, err := ioutil.ReadDir("data/")
 	if err != nil {
 		return err
 	}
 
+    // Remove all JSON files in /data
 	for _, f := range files {
 		if strings.HasSuffix(f.Name(), ".json") {
 			err := os.Remove("data/" + f.Name())
@@ -51,7 +52,7 @@ func doCleanHouse(ctx context.Context, collection *mongo.Collection) error {
 //
 //	in the /data directory and master.json. This sets a completely clean
 //	slate for the database and API.
-func cleanHouse(collection *mongo.Collection) echo.HandlerFunc {
+func cleanHouse(collection *mongo.Collection, eb *EventBus) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
@@ -60,6 +61,8 @@ func cleanHouse(collection *mongo.Collection) echo.HandlerFunc {
 		if err != nil {
 			return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 		}
+
+		eb.Publish("db_updated")
 
 		return c.JSON(http.StatusOK, echo.Map{
 			"message": "Clean house operaton completed successfully",
