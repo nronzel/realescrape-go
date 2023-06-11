@@ -73,7 +73,7 @@ Currently has the following endpoints:
 | GET    | `/houses`                 | Gets all items in MongoDB collection                                                              |
 | GET    | `/houses?page=1&limit=20` | Takes `page` and `limit` parameters to limit results. `page` acts as an offset based on the limit |
 | GET    | `/houses/count`           | Returns the count of all items in the MongoDB collection                                          |
-| GET    | `/livecount`              | SSE endpoint provides live updates when the count changes                                         |
+| GET    | `/live`              | SSE endpoint provides live updates when the count changes                                         |
 | POST   | `/cleardb`                | Deletes all items in MongoDB collection, and all JSON files in the `/data` directory              |
 | POST   | `/scrape/:location`       | Takes a location parameter and scrapes data for the location                                      |
 
