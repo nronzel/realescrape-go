@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"net/url"
@@ -25,7 +26,8 @@ func triggerScrape(collection *mongo.Collection, eb *EventBus) echo.HandlerFunc 
 				c.Logger().Error(err)
 				log.Printf("Failed to scrape data: %v", err)
 			}
-            eb.Publish("db_updated")
+			fmt.Println("trigger scrape event sent")
+			eb.Publish("db_updated")
 		}()
 
 		return c.JSON(http.StatusOK, map[string]string{
