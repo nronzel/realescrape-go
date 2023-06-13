@@ -14,7 +14,7 @@ const DataTable = (props) => {
 
   const startSseConn = async () => {
     const eventSource = new EventSource("http://localhost:3000/live");
-
+    console.log("Connected to Event Source");
     eventSource.onmessage = async (event) => {
       if (event.data === "db_updated") {
         await fetchData(1);
@@ -27,6 +27,10 @@ const DataTable = (props) => {
     };
     eventSource.onerror = () => {
       console.error("Error receiving message, check connection.");
+      if (eventSource.readyState === EventSource.CLOSED) {
+        console.log("Connection lost: attempting reconnect...");
+        setTimeout(startSseConn, 2000);
+      }
     };
     setSse(eventSource);
   };
@@ -107,6 +111,11 @@ const DataTable = (props) => {
             <div className="stat-title">Total Listings</div>
             <div className="stat-value">{total()}</div>
             <div className="stat-desc"></div>
+            {sse() ? (
+              <div className="badge bg-green-500 badge-sm"></div>
+            ) : (
+              <div className="badge bg-red-500 badge-sm"></div>
+            )}
           </div>
 
           <div className="stat place-items-center">
