@@ -170,6 +170,11 @@ If the page gets refreshed the SSE connection gets messed up and it doesn't
 receive the messages from the SSE endpoint. I will need to implement something
 that will fix this and check if the connection was terminated.
 
+3. Load More issue
+
+Currently the load more button will sometimes show duplicate entries. This is
+an issue with how it is being displayed and will be fixed.
+
 ---
 
 If you run into any problems you can open an issue, or submit a pull request.
