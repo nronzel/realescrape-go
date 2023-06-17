@@ -159,26 +159,16 @@ listings were scraped, how long it took, etc.
 #### Known Issues
 
 1. Bad location
+
 If a location is provided with no results the site will still return a 200 response,
 but the page will say "No results found". I will need to add a check for this
 wording on the page and if so I will need to somehow update the client.
 
-2. Searching same location again
-If you search the same location twice the loading indicator will stay stuck
-on the screen.
+2. Refreshing page
 
-Both of these issues are due to how I am updating the front end. Currently the
-SSE endpoint polls the database every 2 seconds and checks the count of the
-collection. If the count changes it sends an update. When you perform a search that
-doesn't update the count, it doesn't update the client and the loading indicator
-remains.
-
-I will be working out some way of fixing this issue.
-
-
-Another bug exists when you click the Load More button, it will show duplicate results.
-This is a bug caused by how the data is being displayed and I should have it worked
-out soon.
+If the page gets refreshed the SSE connection gets messed up and it doesn't
+receive the messages from the SSE endpoint. I will need to implement something
+that will fix this and check if the connection was terminated.
 
 ---
 
