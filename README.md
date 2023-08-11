@@ -2,7 +2,7 @@
 
 ![go-version](https://img.shields.io/badge/Go-v1.20-blue) ![solid](https://img.shields.io/badge/SolidJS-v1.6.10-%233661a1)
 
-Rewrite of my [Python based scraper](https://github.com/nronzel/realescrape)
+Rewrite of my [Python based scraper](https://github.com/nronzel/pyrealescrape)
 in Go using the [Colly](https://github.com/gocolly/colly) web scraping framework.
 
 > NOTE This project is for educational purposes only. Please use with care.
